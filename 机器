@@ -1,0 +1,3434 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 导入相关包"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 对象创建"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 通过series创建"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 3,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    1.0\n",
+       "1    3.0\n",
+       "2    5.0\n",
+       "3    NaN\n",
+       "4    6.0\n",
+       "5    8.0\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 3,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "s=pd.Series([1,3,5,np.nan,6,8]) #注意是Series,第一个字符大写\n",
+    "s"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 32,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0    [1, 2, 3]\n",
+       "1    [4, 5, 6]\n",
+       "dtype: object"
+      ]
+     },
+     "execution_count": 32,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "s2=pd.Series([[1,2,3],[4,5,6]])\n",
+    "s2"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 通过dataframe创建"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 5,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "DatetimeIndex(['2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04',\n",
+       "               '2013-01-05', '2013-01-06'],\n",
+       "              dtype='datetime64[ns]', freq='D')"
+      ]
+     },
+     "execution_count": 5,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#先创建时间索引\n",
+    "dates=pd.date_range('20130101',periods=6)\n",
+    "dates"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 11,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>0.283674</td>\n",
+       "      <td>-1.258124</td>\n",
+       "      <td>-1.143281</td>\n",
+       "      <td>-1.318982</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-0.526053</td>\n",
+       "      <td>-1.250063</td>\n",
+       "      <td>-0.235331</td>\n",
+       "      <td>-0.374807</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>-0.891255</td>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>1.106933</td>\n",
+       "      <td>0.685079</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>-0.680178</td>\n",
+       "      <td>0.495161</td>\n",
+       "      <td>-0.070901</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>-1.159601</td>\n",
+       "      <td>0.381593</td>\n",
+       "      <td>-2.124262</td>\n",
+       "      <td>-1.675186</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>0.045088</td>\n",
+       "      <td>-0.276936</td>\n",
+       "      <td>1.110488</td>\n",
+       "      <td>0.046553</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-01  0.283674 -1.258124 -1.143281 -1.318982\n",
+       "2013-01-02 -0.526053 -1.250063 -0.235331 -0.374807\n",
+       "2013-01-03 -0.891255  0.306235  1.106933  0.685079\n",
+       "2013-01-04  1.215972 -0.680178  0.495161 -0.070901\n",
+       "2013-01-05 -1.159601  0.381593 -2.124262 -1.675186\n",
+       "2013-01-06  0.045088 -0.276936  1.110488  0.046553"
+      ]
+     },
+     "execution_count": 11,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#这里的index和columns可选，默认是从0开始的阿拉伯数字\n",
+    "df=pd.DataFrame(np.random.randn(6,4),index=dates,columns=list('ABCD'))\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 查看数据\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 查看数据的顶行和底行"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>0.283674</td>\n",
+       "      <td>-1.258124</td>\n",
+       "      <td>-1.143281</td>\n",
+       "      <td>-1.318982</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-0.526053</td>\n",
+       "      <td>-1.250063</td>\n",
+       "      <td>-0.235331</td>\n",
+       "      <td>-0.374807</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>-0.891255</td>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>1.106933</td>\n",
+       "      <td>0.685079</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-01  0.283674 -1.258124 -1.143281 -1.318982\n",
+       "2013-01-02 -0.526053 -1.250063 -0.235331 -0.374807\n",
+       "2013-01-03 -0.891255  0.306235  1.106933  0.685079"
+      ]
+     },
+     "execution_count": 12,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.head(3)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>-0.680178</td>\n",
+       "      <td>0.495161</td>\n",
+       "      <td>-0.070901</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>-1.159601</td>\n",
+       "      <td>0.381593</td>\n",
+       "      <td>-2.124262</td>\n",
+       "      <td>-1.675186</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>0.045088</td>\n",
+       "      <td>-0.276936</td>\n",
+       "      <td>1.110488</td>\n",
+       "      <td>0.046553</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-04  1.215972 -0.680178  0.495161 -0.070901\n",
+       "2013-01-05 -1.159601  0.381593 -2.124262 -1.675186\n",
+       "2013-01-06  0.045088 -0.276936  1.110488  0.046553"
+      ]
+     },
+     "execution_count": 13,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.tail(3)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 显示索引与列"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "DatetimeIndex(['2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04',\n",
+       "               '2013-01-05', '2013-01-06'],\n",
+       "              dtype='datetime64[ns]', freq='D')"
+      ]
+     },
+     "execution_count": 14,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.index"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 15,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Index(['A', 'B', 'C', 'D'], dtype='object')"
+      ]
+     },
+     "execution_count": 15,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.columns"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 显示数据快速统计摘要"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>count</th>\n",
+       "      <td>6.000000</td>\n",
+       "      <td>6.000000</td>\n",
+       "      <td>6.000000</td>\n",
+       "      <td>6.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>mean</th>\n",
+       "      <td>-0.172029</td>\n",
+       "      <td>-0.462912</td>\n",
+       "      <td>-0.131715</td>\n",
+       "      <td>-0.451374</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>std</th>\n",
+       "      <td>0.871696</td>\n",
+       "      <td>0.726435</td>\n",
+       "      <td>1.301886</td>\n",
+       "      <td>0.887754</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>min</th>\n",
+       "      <td>-1.159601</td>\n",
+       "      <td>-1.258124</td>\n",
+       "      <td>-2.124262</td>\n",
+       "      <td>-1.675186</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>25%</th>\n",
+       "      <td>-0.799954</td>\n",
+       "      <td>-1.107592</td>\n",
+       "      <td>-0.916294</td>\n",
+       "      <td>-1.082938</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>50%</th>\n",
+       "      <td>-0.240482</td>\n",
+       "      <td>-0.478557</td>\n",
+       "      <td>0.129915</td>\n",
+       "      <td>-0.222854</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>75%</th>\n",
+       "      <td>0.224028</td>\n",
+       "      <td>0.160443</td>\n",
+       "      <td>0.953990</td>\n",
+       "      <td>0.017189</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>max</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>0.381593</td>\n",
+       "      <td>1.110488</td>\n",
+       "      <td>0.685079</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "              A         B         C         D\n",
+       "count  6.000000  6.000000  6.000000  6.000000\n",
+       "mean  -0.172029 -0.462912 -0.131715 -0.451374\n",
+       "std    0.871696  0.726435  1.301886  0.887754\n",
+       "min   -1.159601 -1.258124 -2.124262 -1.675186\n",
+       "25%   -0.799954 -1.107592 -0.916294 -1.082938\n",
+       "50%   -0.240482 -0.478557  0.129915 -0.222854\n",
+       "75%    0.224028  0.160443  0.953990  0.017189\n",
+       "max    1.215972  0.381593  1.110488  0.685079"
+      ]
+     },
+     "execution_count": 16,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.describe()# 显示常见的一些统计数据"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 数据操作"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 转置数据(行列转换)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <th>2013-01-06</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>A</th>\n",
+       "      <td>0.283674</td>\n",
+       "      <td>-0.526053</td>\n",
+       "      <td>-0.891255</td>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>-1.159601</td>\n",
+       "      <td>0.045088</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>B</th>\n",
+       "      <td>-1.258124</td>\n",
+       "      <td>-1.250063</td>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>-0.680178</td>\n",
+       "      <td>0.381593</td>\n",
+       "      <td>-0.276936</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>C</th>\n",
+       "      <td>-1.143281</td>\n",
+       "      <td>-0.235331</td>\n",
+       "      <td>1.106933</td>\n",
+       "      <td>0.495161</td>\n",
+       "      <td>-2.124262</td>\n",
+       "      <td>1.110488</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>D</th>\n",
+       "      <td>-1.318982</td>\n",
+       "      <td>-0.374807</td>\n",
+       "      <td>0.685079</td>\n",
+       "      <td>-0.070901</td>\n",
+       "      <td>-1.675186</td>\n",
+       "      <td>0.046553</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   2013-01-01  2013-01-02  2013-01-03  2013-01-04  2013-01-05  2013-01-06\n",
+       "A    0.283674   -0.526053   -0.891255    1.215972   -1.159601    0.045088\n",
+       "B   -1.258124   -1.250063    0.306235   -0.680178    0.381593   -0.276936\n",
+       "C   -1.143281   -0.235331    1.106933    0.495161   -2.124262    1.110488\n",
+       "D   -1.318982   -0.374807    0.685079   -0.070901   -1.675186    0.046553"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.T"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 按索引排序\n",
+    "\n",
+    "使用sort_index()按索引排序。默认按行索引排序，指定axis=1则按列索引排序。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>c</th>\n",
+       "      <th>f</th>\n",
+       "      <th>d</th>\n",
+       "      <th>a</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>C</th>\n",
+       "      <td>0.774778</td>\n",
+       "      <td>0.473843</td>\n",
+       "      <td>0.559815</td>\n",
+       "      <td>1.444086</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>A</th>\n",
+       "      <td>-0.075902</td>\n",
+       "      <td>0.979828</td>\n",
+       "      <td>-2.261178</td>\n",
+       "      <td>0.233571</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>B</th>\n",
+       "      <td>0.274298</td>\n",
+       "      <td>0.375499</td>\n",
+       "      <td>-0.167876</td>\n",
+       "      <td>-0.083925</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          c         f         d         a\n",
+       "C  0.774778  0.473843  0.559815  1.444086\n",
+       "A -0.075902  0.979828 -2.261178  0.233571\n",
+       "B  0.274298  0.375499 -0.167876 -0.083925"
+      ]
+     },
+     "execution_count": 22,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "frame=pd.DataFrame(np.random.randn(12).reshape(3,4),index=list('CAB'),columns=list('cfda'))\n",
+    "frame"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 23,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>c</th>\n",
+       "      <th>f</th>\n",
+       "      <th>d</th>\n",
+       "      <th>a</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>A</th>\n",
+       "      <td>-0.075902</td>\n",
+       "      <td>0.979828</td>\n",
+       "      <td>-2.261178</td>\n",
+       "      <td>0.233571</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>B</th>\n",
+       "      <td>0.274298</td>\n",
+       "      <td>0.375499</td>\n",
+       "      <td>-0.167876</td>\n",
+       "      <td>-0.083925</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>C</th>\n",
+       "      <td>0.774778</td>\n",
+       "      <td>0.473843</td>\n",
+       "      <td>0.559815</td>\n",
+       "      <td>1.444086</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          c         f         d         a\n",
+       "A -0.075902  0.979828 -2.261178  0.233571\n",
+       "B  0.274298  0.375499 -0.167876 -0.083925\n",
+       "C  0.774778  0.473843  0.559815  1.444086"
+      ]
+     },
+     "execution_count": 23,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "frame.sort_index()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>a</th>\n",
+       "      <th>c</th>\n",
+       "      <th>d</th>\n",
+       "      <th>f</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>C</th>\n",
+       "      <td>1.444086</td>\n",
+       "      <td>0.774778</td>\n",
+       "      <td>0.559815</td>\n",
+       "      <td>0.473843</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>A</th>\n",
+       "      <td>0.233571</td>\n",
+       "      <td>-0.075902</td>\n",
+       "      <td>-2.261178</td>\n",
+       "      <td>0.979828</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>B</th>\n",
+       "      <td>-0.083925</td>\n",
+       "      <td>0.274298</td>\n",
+       "      <td>-0.167876</td>\n",
+       "      <td>0.375499</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          a         c         d         f\n",
+       "C  1.444086  0.774778  0.559815  0.473843\n",
+       "A  0.233571 -0.075902 -2.261178  0.979828\n",
+       "B -0.083925  0.274298 -0.167876  0.375499"
+      ]
+     },
+     "execution_count": 24,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "frame.sort_index(axis=1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 按值排序\n",
+    "\n",
+    "使用sort_values(by,axis=0,...):\n",
+    "* by:这个参数要求传入一个字符或者是一个字符列表,用来指定按照哪个元素进行排序\n",
+    "* axis=0表示调整行,axis=1表示调整列"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 25,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>c</th>\n",
+       "      <th>f</th>\n",
+       "      <th>d</th>\n",
+       "      <th>a</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>C</th>\n",
+       "      <td>0.774778</td>\n",
+       "      <td>0.473843</td>\n",
+       "      <td>0.559815</td>\n",
+       "      <td>1.444086</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>A</th>\n",
+       "      <td>-0.075902</td>\n",
+       "      <td>0.979828</td>\n",
+       "      <td>-2.261178</td>\n",
+       "      <td>0.233571</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>B</th>\n",
+       "      <td>0.274298</td>\n",
+       "      <td>0.375499</td>\n",
+       "      <td>-0.167876</td>\n",
+       "      <td>-0.083925</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          c         f         d         a\n",
+       "C  0.774778  0.473843  0.559815  1.444086\n",
+       "A -0.075902  0.979828 -2.261178  0.233571\n",
+       "B  0.274298  0.375499 -0.167876 -0.083925"
+      ]
+     },
+     "execution_count": 25,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "frame"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>c</th>\n",
+       "      <th>f</th>\n",
+       "      <th>d</th>\n",
+       "      <th>a</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>A</th>\n",
+       "      <td>-0.075902</td>\n",
+       "      <td>0.979828</td>\n",
+       "      <td>-2.261178</td>\n",
+       "      <td>0.233571</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>B</th>\n",
+       "      <td>0.274298</td>\n",
+       "      <td>0.375499</td>\n",
+       "      <td>-0.167876</td>\n",
+       "      <td>-0.083925</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>C</th>\n",
+       "      <td>0.774778</td>\n",
+       "      <td>0.473843</td>\n",
+       "      <td>0.559815</td>\n",
+       "      <td>1.444086</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          c         f         d         a\n",
+       "A -0.075902  0.979828 -2.261178  0.233571\n",
+       "B  0.274298  0.375499 -0.167876 -0.083925\n",
+       "C  0.774778  0.473843  0.559815  1.444086"
+      ]
+     },
+     "execution_count": 31,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "frame.sort_values(by='c')"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>d</th>\n",
+       "      <th>c</th>\n",
+       "      <th>a</th>\n",
+       "      <th>f</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>C</th>\n",
+       "      <td>0.559815</td>\n",
+       "      <td>0.774778</td>\n",
+       "      <td>1.444086</td>\n",
+       "      <td>0.473843</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>A</th>\n",
+       "      <td>-2.261178</td>\n",
+       "      <td>-0.075902</td>\n",
+       "      <td>0.233571</td>\n",
+       "      <td>0.979828</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>B</th>\n",
+       "      <td>-0.167876</td>\n",
+       "      <td>0.274298</td>\n",
+       "      <td>-0.083925</td>\n",
+       "      <td>0.375499</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          d         c         a         f\n",
+       "C  0.559815  0.774778  1.444086  0.473843\n",
+       "A -2.261178 -0.075902  0.233571  0.979828\n",
+       "B -0.167876  0.274298 -0.083925  0.375499"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "frame.sort_values(by='A',axis=1) #默认升序排序"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 数据访问"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 获取数据"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 33,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2013-01-01    0.283674\n",
+       "2013-01-02   -0.526053\n",
+       "2013-01-03   -0.891255\n",
+       "2013-01-04    1.215972\n",
+       "2013-01-05   -1.159601\n",
+       "2013-01-06    0.045088\n",
+       "Freq: D, Name: A, dtype: float64"
+      ]
+     },
+     "execution_count": 33,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#选择一列,获取到一个Series\n",
+    "df['A']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#通过[]获取行"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 35,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>0.283674</td>\n",
+       "      <td>-1.258124</td>\n",
+       "      <td>-1.143281</td>\n",
+       "      <td>-1.318982</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-0.526053</td>\n",
+       "      <td>-1.250063</td>\n",
+       "      <td>-0.235331</td>\n",
+       "      <td>-0.374807</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>-0.891255</td>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>1.106933</td>\n",
+       "      <td>0.685079</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-01  0.283674 -1.258124 -1.143281 -1.318982\n",
+       "2013-01-02 -0.526053 -1.250063 -0.235331 -0.374807\n",
+       "2013-01-03 -0.891255  0.306235  1.106933  0.685079"
+      ]
+     },
+     "execution_count": 35,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df[0:3]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 36,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-0.526053</td>\n",
+       "      <td>-1.250063</td>\n",
+       "      <td>-0.235331</td>\n",
+       "      <td>-0.374807</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>-0.891255</td>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>1.106933</td>\n",
+       "      <td>0.685079</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>-0.680178</td>\n",
+       "      <td>0.495161</td>\n",
+       "      <td>-0.070901</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-02 -0.526053 -1.250063 -0.235331 -0.374807\n",
+       "2013-01-03 -0.891255  0.306235  1.106933  0.685079\n",
+       "2013-01-04  1.215972 -0.680178  0.495161 -0.070901"
+      ]
+     },
+     "execution_count": 36,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df['20130102':'20130104']"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 通过标签选择(loc)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 37,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "A    0.283674\n",
+       "B   -1.258124\n",
+       "C   -1.143281\n",
+       "D   -1.318982\n",
+       "Name: 2013-01-01 00:00:00, dtype: float64"
+      ]
+     },
+     "execution_count": 37,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#选择第一个日期的数据\n",
+    "#第一个参数代表行索引，第二个参数代表列索引\n",
+    "df.loc[dates[0]] #选择第一个日期的数据"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 38,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>0.283674</td>\n",
+       "      <td>-1.258124</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-0.526053</td>\n",
+       "      <td>-1.250063</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>-0.891255</td>\n",
+       "      <td>0.306235</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>-0.680178</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>-1.159601</td>\n",
+       "      <td>0.381593</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>0.045088</td>\n",
+       "      <td>-0.276936</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B\n",
+       "2013-01-01  0.283674 -1.258124\n",
+       "2013-01-02 -0.526053 -1.250063\n",
+       "2013-01-03 -0.891255  0.306235\n",
+       "2013-01-04  1.215972 -0.680178\n",
+       "2013-01-05 -1.159601  0.381593\n",
+       "2013-01-06  0.045088 -0.276936"
+      ]
+     },
+     "execution_count": 38,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#通过标签选择多个维度\n",
+    "df.loc[:,['A','B']]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 39,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-0.526053</td>\n",
+       "      <td>-1.250063</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>-0.891255</td>\n",
+       "      <td>0.306235</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>-0.680178</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B\n",
+       "2013-01-02 -0.526053 -1.250063\n",
+       "2013-01-03 -0.891255  0.306235\n",
+       "2013-01-04  1.215972 -0.680178"
+      ]
+     },
+     "execution_count": 39,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.loc['20130102':'20130104',['A','B']]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 获取标量值"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 40,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.2836742359300112"
+      ]
+     },
+     "execution_count": 40,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.loc[dates[0],'A']"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 42,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0.2836742359300112"
+      ]
+     },
+     "execution_count": 42,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#at函数:通过行名和列名来取值\n",
+    "df.at[dates[0],'A']"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "##### 通过位置选择(iloc)\n",
+    "\n",
+    "loc和iloc的区别:\n",
+    "* loc:通过选取行(列)标签索引数据\n",
+    "* iloc:通过选取行(列)位置编号索引数据"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "A    1.215972\n",
+       "B   -0.680178\n",
+       "C    0.495161\n",
+       "D   -0.070901\n",
+       "Name: 2013-01-04 00:00:00, dtype: float64"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.iloc[3]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 44,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>-0.680178</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>-1.159601</td>\n",
+       "      <td>0.381593</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B\n",
+       "2013-01-04  1.215972 -0.680178\n",
+       "2013-01-05 -1.159601  0.381593"
+      ]
+     },
+     "execution_count": 44,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.iloc[3:5,0:2]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>C</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-0.526053</td>\n",
+       "      <td>-0.235331</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>-0.891255</td>\n",
+       "      <td>1.106933</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>-1.159601</td>\n",
+       "      <td>-2.124262</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         C\n",
+       "2013-01-02 -0.526053 -0.235331\n",
+       "2013-01-03 -0.891255  1.106933\n",
+       "2013-01-05 -1.159601 -2.124262"
+      ]
+     },
+     "execution_count": 45,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.iloc[[1,2,4],[0,2]]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>-1.258124</td>\n",
+       "      <td>-1.143281</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-1.250063</td>\n",
+       "      <td>-0.235331</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>1.106933</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>-0.680178</td>\n",
+       "      <td>0.495161</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>0.381593</td>\n",
+       "      <td>-2.124262</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>-0.276936</td>\n",
+       "      <td>1.110488</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   B         C\n",
+       "2013-01-01 -1.258124 -1.143281\n",
+       "2013-01-02 -1.250063 -0.235331\n",
+       "2013-01-03  0.306235  1.106933\n",
+       "2013-01-04 -0.680178  0.495161\n",
+       "2013-01-05  0.381593 -2.124262\n",
+       "2013-01-06 -0.276936  1.110488"
+      ]
+     },
+     "execution_count": 46,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.iloc[:,1:3]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "###### 快速访问标量\n",
+    "\n",
+    "at和iat的区别:\n",
+    "* at:通过选取行列标签索引标量\n",
+    "* iat:通过选取行列位置编号索引标量"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "-1.2500628279575439"
+      ]
+     },
+     "execution_count": 47,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.iat[1,1]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 布尔值索引"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 49,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>0.283674</td>\n",
+       "      <td>-1.258124</td>\n",
+       "      <td>-1.143281</td>\n",
+       "      <td>-1.318982</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>-0.680178</td>\n",
+       "      <td>0.495161</td>\n",
+       "      <td>-0.070901</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>0.045088</td>\n",
+       "      <td>-0.276936</td>\n",
+       "      <td>1.110488</td>\n",
+       "      <td>0.046553</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-01  0.283674 -1.258124 -1.143281 -1.318982\n",
+       "2013-01-04  1.215972 -0.680178  0.495161 -0.070901\n",
+       "2013-01-06  0.045088 -0.276936  1.110488  0.046553"
+      ]
+     },
+     "execution_count": 49,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#通过判断单列的值选择数据\n",
+    "df[df.A>0] #通过df.A快速获取‘A’所指向的列"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 50,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>0.283674</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>1.106933</td>\n",
+       "      <td>0.685079</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0.495161</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0.381593</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>0.045088</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1.110488</td>\n",
+       "      <td>0.046553</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-01  0.283674       NaN       NaN       NaN\n",
+       "2013-01-02       NaN       NaN       NaN       NaN\n",
+       "2013-01-03       NaN  0.306235  1.106933  0.685079\n",
+       "2013-01-04  1.215972       NaN  0.495161       NaN\n",
+       "2013-01-05       NaN  0.381593       NaN       NaN\n",
+       "2013-01-06  0.045088       NaN  1.110488  0.046553"
+      ]
+     },
+     "execution_count": 50,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df[df>0]"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 缺少数据\n",
+    "\n",
+    "pandas使用np.nan表示缺少数据。"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 61,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "                   A         B         C         D\n",
+      "2013-01-01       NaN       NaN       NaN       NaN\n",
+      "2013-01-02       NaN       NaN       NaN       NaN\n",
+      "2013-01-03       NaN  0.306235  1.106933  0.685079\n",
+      "2013-01-04  1.215972       NaN  0.495161       NaN\n",
+      "2013-01-05       NaN  0.381593       NaN       NaN\n",
+      "2013-01-06       NaN       NaN  1.110488       NaN\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>1.106933</td>\n",
+       "      <td>0.685079</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0.495161</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>0.381593</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>NaN</td>\n",
+       "      <td>NaN</td>\n",
+       "      <td>1.110488</td>\n",
+       "      <td>NaN</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-03       NaN  0.306235  1.106933  0.685079\n",
+       "2013-01-04  1.215972       NaN  0.495161       NaN\n",
+       "2013-01-05       NaN  0.381593       NaN       NaN\n",
+       "2013-01-06       NaN       NaN  1.110488       NaN"
+      ]
+     },
+     "execution_count": 61,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#丢弃存在缺少数据的行\n",
+    "df2=df[df>0.3]\n",
+    "print(df2)\n",
+    "df2.dropna(how='all') #how='all'表示滤除全为NaN的行,how='any'表示滤除有NaN的行\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 59,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>1.106933</td>\n",
+       "      <td>0.685079</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>0.495161</td>\n",
+       "      <td>5.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>0.381593</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>5.000000</td>\n",
+       "      <td>1.110488</td>\n",
+       "      <td>5.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-01  5.000000  5.000000  5.000000  5.000000\n",
+       "2013-01-02  5.000000  5.000000  5.000000  5.000000\n",
+       "2013-01-03  5.000000  0.306235  1.106933  0.685079\n",
+       "2013-01-04  1.215972  5.000000  0.495161  5.000000\n",
+       "2013-01-05  5.000000  0.381593  5.000000  5.000000\n",
+       "2013-01-06  5.000000  5.000000  1.110488  5.000000"
+      ]
+     },
+     "execution_count": 59,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#填充缺失值\n",
+    "df2.fillna(value=5)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 60,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>True</td>\n",
+       "      <td>True</td>\n",
+       "      <td>True</td>\n",
+       "      <td>True</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>True</td>\n",
+       "      <td>True</td>\n",
+       "      <td>True</td>\n",
+       "      <td>True</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>True</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "      <td>False</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>False</td>\n",
+       "      <td>True</td>\n",
+       "      <td>False</td>\n",
+       "      <td>True</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>True</td>\n",
+       "      <td>False</td>\n",
+       "      <td>True</td>\n",
+       "      <td>True</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>True</td>\n",
+       "      <td>True</td>\n",
+       "      <td>False</td>\n",
+       "      <td>True</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                A      B      C      D\n",
+       "2013-01-01   True   True   True   True\n",
+       "2013-01-02   True   True   True   True\n",
+       "2013-01-03   True  False  False  False\n",
+       "2013-01-04  False   True  False   True\n",
+       "2013-01-05   True  False   True   True\n",
+       "2013-01-06   True   True  False   True"
+      ]
+     },
+     "execution_count": 60,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#判断是否为nan值得boolean掩码\n",
+    "pd.isna(df2)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 运算\n",
+    "\n",
+    "运算通常不包含缺失值"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 统计数据"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 62,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "A   -0.172029\n",
+       "B   -0.462912\n",
+       "C   -0.131715\n",
+       "D   -0.451374\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 62,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.mean()"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 63,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "2013-01-01   -0.859178\n",
+       "2013-01-02   -0.596564\n",
+       "2013-01-03    0.301748\n",
+       "2013-01-04    0.240014\n",
+       "2013-01-05   -1.144364\n",
+       "2013-01-06    0.231298\n",
+       "Freq: D, dtype: float64"
+      ]
+     },
+     "execution_count": 63,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.mean(1)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 对数据运用函数\n",
+    "\n",
+    "DataFrame.apply(func,axis=0,...)\n",
+    "\n",
+    "参数说明:\n",
+    "* func：传入的函数，相当于C/C++的函数指针\n",
+    "* axis=0则将一列数据传入函数,axis=1则每次将一行数据传入函数"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 64,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>0.283674</td>\n",
+       "      <td>-1.258124</td>\n",
+       "      <td>-1.143281</td>\n",
+       "      <td>-1.318982</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-0.526053</td>\n",
+       "      <td>-1.250063</td>\n",
+       "      <td>-0.235331</td>\n",
+       "      <td>-0.374807</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>-0.891255</td>\n",
+       "      <td>0.306235</td>\n",
+       "      <td>1.106933</td>\n",
+       "      <td>0.685079</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>1.215972</td>\n",
+       "      <td>-0.680178</td>\n",
+       "      <td>0.495161</td>\n",
+       "      <td>-0.070901</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>-1.159601</td>\n",
+       "      <td>0.381593</td>\n",
+       "      <td>-2.124262</td>\n",
+       "      <td>-1.675186</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>0.045088</td>\n",
+       "      <td>-0.276936</td>\n",
+       "      <td>1.110488</td>\n",
+       "      <td>0.046553</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-01  0.283674 -1.258124 -1.143281 -1.318982\n",
+       "2013-01-02 -0.526053 -1.250063 -0.235331 -0.374807\n",
+       "2013-01-03 -0.891255  0.306235  1.106933  0.685079\n",
+       "2013-01-04  1.215972 -0.680178  0.495161 -0.070901\n",
+       "2013-01-05 -1.159601  0.381593 -2.124262 -1.675186\n",
+       "2013-01-06  0.045088 -0.276936  1.110488  0.046553"
+      ]
+     },
+     "execution_count": 64,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 65,
+   "metadata": {
+    "scrolled": true
+   },
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>A</th>\n",
+       "      <th>B</th>\n",
+       "      <th>C</th>\n",
+       "      <th>D</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>2013-01-01</th>\n",
+       "      <td>0.283674</td>\n",
+       "      <td>-1.258124</td>\n",
+       "      <td>-1.143281</td>\n",
+       "      <td>-1.318982</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-02</th>\n",
+       "      <td>-0.242379</td>\n",
+       "      <td>-2.508187</td>\n",
+       "      <td>-1.378612</td>\n",
+       "      <td>-1.693789</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-03</th>\n",
+       "      <td>-1.133634</td>\n",
+       "      <td>-2.201952</td>\n",
+       "      <td>-0.271679</td>\n",
+       "      <td>-1.008710</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-04</th>\n",
+       "      <td>0.082338</td>\n",
+       "      <td>-2.882129</td>\n",
+       "      <td>0.223482</td>\n",
+       "      <td>-1.079612</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-05</th>\n",
+       "      <td>-1.077262</td>\n",
+       "      <td>-2.500536</td>\n",
+       "      <td>-1.900780</td>\n",
+       "      <td>-2.754798</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2013-01-06</th>\n",
+       "      <td>-1.032174</td>\n",
+       "      <td>-2.777472</td>\n",
+       "      <td>-0.790293</td>\n",
+       "      <td>-2.708246</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "                   A         B         C         D\n",
+       "2013-01-01  0.283674 -1.258124 -1.143281 -1.318982\n",
+       "2013-01-02 -0.242379 -2.508187 -1.378612 -1.693789\n",
+       "2013-01-03 -1.133634 -2.201952 -0.271679 -1.008710\n",
+       "2013-01-04  0.082338 -2.882129  0.223482 -1.079612\n",
+       "2013-01-05 -1.077262 -2.500536 -1.900780 -2.754798\n",
+       "2013-01-06 -1.032174 -2.777472 -0.790293 -2.708246"
+      ]
+     },
+     "execution_count": 65,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.apply(np.cumsum)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 66,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "A    2.375573\n",
+       "B    1.639718\n",
+       "C    3.234750\n",
+       "D    2.360265\n",
+       "dtype: float64"
+      ]
+     },
+     "execution_count": 66,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.apply(lambda x:x.max()-x.min()) #这里的x是一列数据"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 合并"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 连接"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 67,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "      <th>1</th>\n",
+       "      <th>2</th>\n",
+       "      <th>3</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>-2.346930</td>\n",
+       "      <td>-0.843893</td>\n",
+       "      <td>-1.562842</td>\n",
+       "      <td>0.223810</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0.031381</td>\n",
+       "      <td>0.260611</td>\n",
+       "      <td>1.949308</td>\n",
+       "      <td>-0.326071</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0.064482</td>\n",
+       "      <td>0.060145</td>\n",
+       "      <td>0.677236</td>\n",
+       "      <td>0.846692</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>-0.614188</td>\n",
+       "      <td>-0.215029</td>\n",
+       "      <td>2.185771</td>\n",
+       "      <td>0.217924</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1.247276</td>\n",
+       "      <td>-1.131724</td>\n",
+       "      <td>0.336969</td>\n",
+       "      <td>-1.604712</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>-0.633525</td>\n",
+       "      <td>1.425953</td>\n",
+       "      <td>2.472570</td>\n",
+       "      <td>0.959619</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>-2.436455</td>\n",
+       "      <td>-0.976973</td>\n",
+       "      <td>-1.253845</td>\n",
+       "      <td>-2.385834</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>1.279726</td>\n",
+       "      <td>-0.683033</td>\n",
+       "      <td>1.089339</td>\n",
+       "      <td>-0.736067</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>0.356080</td>\n",
+       "      <td>-0.919484</td>\n",
+       "      <td>2.005166</td>\n",
+       "      <td>-0.367869</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>1.216503</td>\n",
+       "      <td>0.668547</td>\n",
+       "      <td>-1.095472</td>\n",
+       "      <td>1.203103</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          0         1         2         3\n",
+       "0 -2.346930 -0.843893 -1.562842  0.223810\n",
+       "1  0.031381  0.260611  1.949308 -0.326071\n",
+       "2  0.064482  0.060145  0.677236  0.846692\n",
+       "3 -0.614188 -0.215029  2.185771  0.217924\n",
+       "4  1.247276 -1.131724  0.336969 -1.604712\n",
+       "5 -0.633525  1.425953  2.472570  0.959619\n",
+       "6 -2.436455 -0.976973 -1.253845 -2.385834\n",
+       "7  1.279726 -0.683033  1.089339 -0.736067\n",
+       "8  0.356080 -0.919484  2.005166 -0.367869\n",
+       "9  1.216503  0.668547 -1.095472  1.203103"
+      ]
+     },
+     "execution_count": 67,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df=pd.DataFrame(np.random.randn(10,4))\n",
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 68,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "      <th>1</th>\n",
+       "      <th>2</th>\n",
+       "      <th>3</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>-2.346930</td>\n",
+       "      <td>-0.843893</td>\n",
+       "      <td>-1.562842</td>\n",
+       "      <td>0.223810</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0.031381</td>\n",
+       "      <td>0.260611</td>\n",
+       "      <td>1.949308</td>\n",
+       "      <td>-0.326071</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0.064482</td>\n",
+       "      <td>0.060145</td>\n",
+       "      <td>0.677236</td>\n",
+       "      <td>0.846692</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>-0.614188</td>\n",
+       "      <td>-0.215029</td>\n",
+       "      <td>2.185771</td>\n",
+       "      <td>0.217924</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1.247276</td>\n",
+       "      <td>-1.131724</td>\n",
+       "      <td>0.336969</td>\n",
+       "      <td>-1.604712</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>-0.633525</td>\n",
+       "      <td>1.425953</td>\n",
+       "      <td>2.472570</td>\n",
+       "      <td>0.959619</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>-2.436455</td>\n",
+       "      <td>-0.976973</td>\n",
+       "      <td>-1.253845</td>\n",
+       "      <td>-2.385834</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>1.279726</td>\n",
+       "      <td>-0.683033</td>\n",
+       "      <td>1.089339</td>\n",
+       "      <td>-0.736067</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>0.356080</td>\n",
+       "      <td>-0.919484</td>\n",
+       "      <td>2.005166</td>\n",
+       "      <td>-0.367869</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>1.216503</td>\n",
+       "      <td>0.668547</td>\n",
+       "      <td>-1.095472</td>\n",
+       "      <td>1.203103</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          0         1         2         3\n",
+       "0 -2.346930 -0.843893 -1.562842  0.223810\n",
+       "1  0.031381  0.260611  1.949308 -0.326071\n",
+       "2  0.064482  0.060145  0.677236  0.846692\n",
+       "3 -0.614188 -0.215029  2.185771  0.217924\n",
+       "4  1.247276 -1.131724  0.336969 -1.604712\n",
+       "5 -0.633525  1.425953  2.472570  0.959619\n",
+       "6 -2.436455 -0.976973 -1.253845 -2.385834\n",
+       "7  1.279726 -0.683033  1.089339 -0.736067\n",
+       "8  0.356080 -0.919484  2.005166 -0.367869\n",
+       "9  1.216503  0.668547 -1.095472  1.203103"
+      ]
+     },
+     "execution_count": 68,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#使用concat进行连接\n",
+    "pieces=[df[:3],df[3:7],df[7:]]\n",
+    "pd.concat(pieces)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 加入( merge)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 70,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>key</th>\n",
+       "      <th>lval</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>foo</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>bar</td>\n",
+       "      <td>2</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   key  lval\n",
+       "0  foo     1\n",
+       "1  bar     2"
+      ]
+     },
+     "execution_count": 70,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "left=pd.DataFrame({'key':['foo','bar'],'lval':[1,2]})\n",
+    "left"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 71,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>key</th>\n",
+       "      <th>rval</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>foo</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>bar</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   key  rval\n",
+       "0  foo     4\n",
+       "1  bar     5"
+      ]
+     },
+     "execution_count": 71,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "right=pd.DataFrame({'key':['foo','bar'],'rval':[4,5]})\n",
+    "right"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 73,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>key</th>\n",
+       "      <th>lval</th>\n",
+       "      <th>rval</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>foo</td>\n",
+       "      <td>1</td>\n",
+       "      <td>4</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>bar</td>\n",
+       "      <td>2</td>\n",
+       "      <td>5</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "   key  lval  rval\n",
+       "0  foo     1     4\n",
+       "1  bar     2     5"
+      ]
+     },
+     "execution_count": 73,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "#通过merge取并集\n",
+    "pd.merge(left,right,on='key') #on指用于连接的列索引"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### 添加(append)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 74,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "      <th>1</th>\n",
+       "      <th>2</th>\n",
+       "      <th>3</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>-2.346930</td>\n",
+       "      <td>-0.843893</td>\n",
+       "      <td>-1.562842</td>\n",
+       "      <td>0.223810</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0.031381</td>\n",
+       "      <td>0.260611</td>\n",
+       "      <td>1.949308</td>\n",
+       "      <td>-0.326071</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0.064482</td>\n",
+       "      <td>0.060145</td>\n",
+       "      <td>0.677236</td>\n",
+       "      <td>0.846692</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>-0.614188</td>\n",
+       "      <td>-0.215029</td>\n",
+       "      <td>2.185771</td>\n",
+       "      <td>0.217924</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1.247276</td>\n",
+       "      <td>-1.131724</td>\n",
+       "      <td>0.336969</td>\n",
+       "      <td>-1.604712</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>-0.633525</td>\n",
+       "      <td>1.425953</td>\n",
+       "      <td>2.472570</td>\n",
+       "      <td>0.959619</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>-2.436455</td>\n",
+       "      <td>-0.976973</td>\n",
+       "      <td>-1.253845</td>\n",
+       "      <td>-2.385834</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>1.279726</td>\n",
+       "      <td>-0.683033</td>\n",
+       "      <td>1.089339</td>\n",
+       "      <td>-0.736067</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>0.356080</td>\n",
+       "      <td>-0.919484</td>\n",
+       "      <td>2.005166</td>\n",
+       "      <td>-0.367869</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>1.216503</td>\n",
+       "      <td>0.668547</td>\n",
+       "      <td>-1.095472</td>\n",
+       "      <td>1.203103</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          0         1         2         3\n",
+       "0 -2.346930 -0.843893 -1.562842  0.223810\n",
+       "1  0.031381  0.260611  1.949308 -0.326071\n",
+       "2  0.064482  0.060145  0.677236  0.846692\n",
+       "3 -0.614188 -0.215029  2.185771  0.217924\n",
+       "4  1.247276 -1.131724  0.336969 -1.604712\n",
+       "5 -0.633525  1.425953  2.472570  0.959619\n",
+       "6 -2.436455 -0.976973 -1.253845 -2.385834\n",
+       "7  1.279726 -0.683033  1.089339 -0.736067\n",
+       "8  0.356080 -0.919484  2.005166 -0.367869\n",
+       "9  1.216503  0.668547 -1.095472  1.203103"
+      ]
+     },
+     "execution_count": 74,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 78,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0   -0.614188\n",
+       "1   -0.215029\n",
+       "2    2.185771\n",
+       "3    0.217924\n",
+       "Name: 3, dtype: float64"
+      ]
+     },
+     "execution_count": 78,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "s=df.iloc[3]\n",
+    "s"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 79,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "      <th>1</th>\n",
+       "      <th>2</th>\n",
+       "      <th>3</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>-2.346930</td>\n",
+       "      <td>-0.843893</td>\n",
+       "      <td>-1.562842</td>\n",
+       "      <td>0.223810</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0.031381</td>\n",
+       "      <td>0.260611</td>\n",
+       "      <td>1.949308</td>\n",
+       "      <td>-0.326071</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0.064482</td>\n",
+       "      <td>0.060145</td>\n",
+       "      <td>0.677236</td>\n",
+       "      <td>0.846692</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>-0.614188</td>\n",
+       "      <td>-0.215029</td>\n",
+       "      <td>2.185771</td>\n",
+       "      <td>0.217924</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>1.247276</td>\n",
+       "      <td>-1.131724</td>\n",
+       "      <td>0.336969</td>\n",
+       "      <td>-1.604712</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>-0.633525</td>\n",
+       "      <td>1.425953</td>\n",
+       "      <td>2.472570</td>\n",
+       "      <td>0.959619</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>-2.436455</td>\n",
+       "      <td>-0.976973</td>\n",
+       "      <td>-1.253845</td>\n",
+       "      <td>-2.385834</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>1.279726</td>\n",
+       "      <td>-0.683033</td>\n",
+       "      <td>1.089339</td>\n",
+       "      <td>-0.736067</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>0.356080</td>\n",
+       "      <td>-0.919484</td>\n",
+       "      <td>2.005166</td>\n",
+       "      <td>-0.367869</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>1.216503</td>\n",
+       "      <td>0.668547</td>\n",
+       "      <td>-1.095472</td>\n",
+       "      <td>1.203103</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>-0.614188</td>\n",
+       "      <td>-0.215029</td>\n",
+       "      <td>2.185771</td>\n",
+       "      <td>0.217924</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "           0         1         2         3\n",
+       "0  -2.346930 -0.843893 -1.562842  0.223810\n",
+       "1   0.031381  0.260611  1.949308 -0.326071\n",
+       "2   0.064482  0.060145  0.677236  0.846692\n",
+       "3  -0.614188 -0.215029  2.185771  0.217924\n",
+       "4   1.247276 -1.131724  0.336969 -1.604712\n",
+       "5  -0.633525  1.425953  2.472570  0.959619\n",
+       "6  -2.436455 -0.976973 -1.253845 -2.385834\n",
+       "7   1.279726 -0.683033  1.089339 -0.736067\n",
+       "8   0.356080 -0.919484  2.005166 -0.367869\n",
+       "9   1.216503  0.668547 -1.095472  1.203103\n",
+       "10 -0.614188 -0.215029  2.185771  0.217924"
+      ]
+     },
+     "execution_count": 79,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "df.append(s,ignore_index=True)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "### 获取数据"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "#### CSV"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#写入csv文件\n",
+    "df.to_csv('foo.csv')\n",
+    "#读csv文件\n",
+    "pd.read_csv('foo.csv')"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.7.6"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
