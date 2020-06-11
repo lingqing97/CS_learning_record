@@ -38,7 +38,7 @@ public:
 ```
 
 #### 相似题目
-![avatar](/image/leetcode_栈——丑数二.jpg)
+![avatar](/image/leetcode_栈_丑数二.jpg)
 ##### 题解
 ```c++
 class Solution {
