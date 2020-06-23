@@ -37,7 +37,7 @@ select prod_name
 from products
 limit 5; /*取前5行*/
 
-selct prod_name
+select prod_name
 from products
 limit 5,5;  /*从行5开始，取5行（不包括行5）*/
 ```
