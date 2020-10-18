@@ -50,7 +50,7 @@ str.insert(6,str3,3,4)//str此时为"to be not the question";
 ```c++
 //string& erase (size_t pos = 0, size_t len = npos);
 string str="This is an example sentence.";
-str.earse(10,8); //str此时为"This is an sentence.";
+str.erase(10,8); //str此时为"This is an sentence.";
 ```
 
 * append操作:尾部追加字符和字符串
