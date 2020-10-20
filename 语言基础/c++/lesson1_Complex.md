@@ -1,4 +1,4 @@
-### Complex类代码解析
+### Complex类代码解析(一)
 ```cpp
 #ifndef __COMPLEX
 #define __COMPLEX
@@ -27,20 +27,51 @@ class complex
         //定义友元函数
         friend complex& __doapl (complex*, const complex&);
 };
-//类定义
-complex::functino ...
+//成员函数重载
+inline complex& complex::operator +=(const complex& r){
+    return __doapl(this,r);
+}
+//友元函数定义
+inline complex& __doapl(complex* ths,const complex& r){
+    //自由取得friend的private成员
+    ths->re+=r.re;
+    ths->im+=r.im;
+    return *ths;
+}
+//非成员函数重载
+//下面这些函数绝不可return by reference
+//因为返回的值都是在函数内临时创建的
+inline complex operator+ (const complex&x,const complex& y){
+    return complex(real(x)+real(h),imge(x)+imge(y));
+}
+inline complex operator+ (const complex& x,double y){
+    return complex(real(x)+y,imge(x));
+}
+inline complex operator+ (double x,const complex& y){
+    return complex(x+real(y),imge(y));
+}
 
-#endif
-```
+//用法cout<<+x;
+inline complex operator+(const complex& x){
+    return x;
+}
+//用法cout<<-x;
+inline complex operator-(const complex& x){
+    return complex(-real(x),-image(x));
+}
 
-#### 知识点1:防御式声明避免头文件中的函数或类被重复调用
-
-```cpp
-#ifndef __COMPLEX__
-#define __COMPLEX__
-//代码段
+//重载等于运算符
+inline bool operator ++(const complex& x,const complex& y){
+    retur real(x)==real(y)&&imge(x)==imge(y);
+}
 //...
-//代码段
+//全局函数
+inline double imag(const complex& x){
+    return x.imge();
+}
+inline double real(const complex& x){
+    return x.real();
+}
 #endif
 ```
 
@@ -173,6 +204,89 @@ int* const function7();     // 返回一个指向变量的常指针，使用：i
 
 
 #### 知识点7:返回值传递return by value vs. return by reference
+
+* 在含有`return`语句的循环后面应该也有一条`return`语句，如果没有的话该程序就是错误的。很多编译器都无法发现此类错误。
+* 若返回引用，则引用所引的对象应该是在函数之前已经存在的
+
+##### 扩展:引用返回左值
+
+```c++
+char &get_val(string& str,string::size_type ix){
+    return str[ix];
+}
+int main(){
+    string s("a value");
+    cout<<s<<endl;
+    get_val(s,0)='A';   //将s[0]的值改为A
+    cout<<s<<endl;      //输出A value
+    return 0;
+}
+```
+如果返回类型是常量引用，我们不能给调用的结果赋值。
+
+#### 知识点8:友元friend
+
+* 类可以允许其他类或者函数访问它的非公有成员，方法是令其他类或者函数成为它的**友元(friend)**.
+* 友元声明只能出现在类定义的内部，但是在类内出现的具体位置不限。友元不是类的成员也**不受它所在区域控制级别的约束**。一般来说，最好在类定义开始或者结束前的位置集中声明友元。
+* 为了使友元对类的用户可见，我们通常把友元的声明(除了类内部的友元声明之外)与类本身放置在同一个头文件中(放置在类的外部)。
+* 友元的利:可以访问私有成员；友元的弊:破坏了封装性.
+
+* **相同class的各个objects互为friends.**
+
+```c++
+//相同class的各个objects互为friends
+class complex{
+    public:
+        complex(double r=0,double i=0):re(r),im(i){}
+        int func(const complex& param){ return param.re+param.im; }
+    private:
+        double re,im;
+}
+
+int main(){
+    complex c1(2,1);
+    complex c2;
+
+    c2.func(c1);    //c2可以直接访问c1的私有变量
+    return 0;
+}
+```
+
+#### 知识点9:操作符重载
+
+* 如果一个重载运算符函数是成员函数则它的第一个（左侧）运算对象绑定到隐式的this指针上。
+* 对于一个运算符函数来说，它或者是类的成员，或者至少含有一个类类型的参数。
+
+##### 例子:重载输入运算符`>>`和输出运算符`>>`
+
+* 输入输出运算符必须是非成员函数
+
+```c++
+//重载输入运算符>>
+//返回引用
+istream &operator>>(istream &is,Sales_data &item){
+    double prices;  //不需要初始化
+    is >> item.bookNo >> item.units_sold >>price;
+    if(is) //检测输入是否成功
+        item.revenue=item.units_sold*price;
+    else
+        item=Sales_data(); //输入失败:对象被赋予默认的状态
+    return is;
+}
+```
+
+```c++
+//重载输出运算符<<
+//返回引用
+ostream &operator<<(ostream &os,const Sales_data &item){
+    os<<item.isbn()<<" "<<item.units_sold<<" "<<item.revenus<<" "<<item.avg_price();
+    return os;
+}
+```
+
+
+
+
 
 
 
