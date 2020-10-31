@@ -47,7 +47,7 @@ Strnig& String::operator=(const String& str){
     delete[] m_data;
     m_data=new char[strlen(str.m_data)+1];
     strcpy(m_data,str.m_data);
-    return *this;w
+    return *this;
 }
 //拷贝赋值函数的调用
 //{
