@@ -121,7 +121,7 @@ private:
 //定义函数模板
 //class 和typename都可以
 template <class T>
-inline min(const stone& a,const stone& b){
+inline T& min(const T& a,const T& b){
     return b<a?b:a;
 }
 //调用
@@ -130,6 +130,56 @@ int main(){
     r3=min(r1,r2);  //不需要写成min<stone>,编译器会对function template进行引数推导
 }
 ```
+
+### 知识点4:组合与继承
+
+#### Composition(复合),表示has-a
+
+![avatar](../../image/c++_候捷_类复合.jpg)
+
+* Composition:一个类含有另一个类
+* Composition的两个类的生命周期同步
+
+* 构造由内而外:Container的构造函数首先**调用Component的default构造函数**,然后才执行自己.
+```cpp
+Container::Container(...):Component() {...};
+```
+* 析构由外而内:**Container的析构函数首先执行自己**，然后才调用Component的析构函数.
+```cpp
+Container::~Container(...) {...; ~Component() };
+```
+
+#### Delegation(委托),Composition by reference
+
+![avatar](../../image/c++_候捷_类委托.jpg)
+
+* Delegation:两个类通过指针连接
+* Delegaion的两个类的生命周期不同步
+
+#### Inheritance(继承),表示is-a
+
+![avatar](../../image/c++_候捷_类继承.jpg)
+
+```cpp
+struct _List_node_base
+{
+    _List_node_base* _M_next;
+    _list_node_base* _M_prev;
+};
+
+template<typename _Tp>
+struct _List_node:public _List_node_base
+{
+    _Tp _M_data;
+};
+```
+
+![avatar](../../image/c++_候捷_类继承2.jpg)
+
+* 构造和析构的过程和类复合的过程一样
+* base class的析构函数必须是virtual,否则会出现undefined behavior
+
+
 
 
 
