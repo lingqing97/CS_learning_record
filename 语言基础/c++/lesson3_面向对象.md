@@ -154,7 +154,7 @@ Container::~Container(...) {...; ~Component() };
 ![avatar](../../image/c++_候捷_类委托.jpg)
 
 * Delegation:两个类通过指针连接
-* Delegaion的两个类的生命周期不同步
+* Delegation的两个类的生命周期不同步
 
 #### Inheritance(继承),表示is-a
 
@@ -178,6 +178,68 @@ struct _List_node:public _List_node_base
 
 * 构造和析构的过程和类复合的过程一样
 * base class的析构函数必须是virtual,否则会出现undefined behavior
+
+
+### 知识点5:虚函数与多态
+
+#### Inheritance(继承) with virtual
+
+* non-virtual函数：你不希望子类重新定义(override)它.
+* virtual函数：你希望子类重新定义(override)它，且你对它已有默认定义.
+* pure virtual函数：你希望子类**一定**要重新定义(override)它，你对它没有默认定义.
+
+```cpp
+//例子1
+class Shape{
+public:
+    virtual void draw() const=0;    //pure virtual function
+    virtual void error(const std::string& msg); //impure virtual function
+    int objectID() const;   //non-virtual
+};
+
+class Rectangle:public Shape{...};
+class Ellipse:public Shape{...};
+```
+
+
+```cpp
+//例子2
+#include<iostream>
+using namespace std;
+
+class CDocument{
+public:
+    void OnFileOpen(){
+        //这是个算法，每个cout输出代表一个实际动作
+        cout<<"dialog..."<<endl;
+        cout<<"check file status..."<<endl;
+        cout<<"open file..."<<endl;
+        Serialize();
+        cout<<"close file..."<<endl;
+        cout<<"update all views..."<<endl;
+    }
+    virtual void Serialize() {};
+};
+
+class CMyDoc:public CDocument{
+public:
+    virtual void Serialize(){
+        //只有应用程序本身才知道读取自己的文件(格式)
+        cout<<"CMyDoc::Serialize()"<<endl;
+    }
+}
+
+int main(){
+    CMyDoc myDoc;
+    myDoc.onFileOpen();
+}
+```
+
+#### 继承+复合关系下的构造和析构
+
+![avatar](../../image/c++_候捷_继承复合.jpg)
+
+
 
 
 
