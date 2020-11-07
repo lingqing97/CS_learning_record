@@ -99,7 +99,47 @@ int main(){
 
 ### 知识点3：智能指针
 
+#### shared_ptr
+
+```c++
+//shared_ptr简化版
+template <class T>
+class shared_ptr{
+public:
+    //获取元素
+    T& operator* const{
+        return *px;
+    }
+    //获取指针
+    T* operator-> const{
+        return px;
+    }
+    shared_ptr(T* p):px(p) {}
+private:
+    T*      px;
+    long*   pn;
+};
+//定义Foo类
+struct Foo{
+    ...
+    void method(void) {...}
+};
+//调用
+int main(){
+    shared_ptr<Foo> sp(new Foo);
+    Foo f(*sp);
+    sp->method;     //相当于px->method,运算符'->'具有传递性
+}
+```
+
+#### 迭代器
+
+![avatar](../../image/c++_候捷_迭代器1.jpg)
+![avatar](../../image/c++_候捷_迭代器2.jpg)
 
 
+#### 总结
+
+* 智能指针一般要重载`operator*`和`operator->`,且`operator*`用于获取元素,`operator->`用于获取元素的指针.
 
 
