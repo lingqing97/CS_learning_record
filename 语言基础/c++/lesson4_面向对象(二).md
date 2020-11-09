@@ -143,3 +143,39 @@ int main(){
 * 智能指针一般要重载`operator*`和`operator->`,且`operator*`用于获取元素,`operator->`用于获取元素的指针.
 
 
+### 知识点4：成员模板 member template
+
+```cpp
+template <class T1,class T2>
+struct pair{
+    typedef T1 first_type;
+    typedef T2 second_type;
+
+    T1 first;
+    T2 second;
+
+    pair():first(T1()),second(T2()){}
+    pair(const T1& a,const T2& b):first(a),seoncd(b) {}
+
+    //类模板中可以有另外不同类型的类模板
+    template<class U1,class U2>
+    pair(const pair<U1,U2>& p):first(p.first),second(p.second()) {}
+};
+//调用
+int main(){
+    class Base1{};
+    class Derived1:public Base1{};
+    class Base2{};
+    class Derived2:public Base2{};
+
+    pair<Derived1,Derived2> p;
+    pair<Base1,Base2> p2(p);  //pair<Base1,Base2> p2(pair<Derived1,Derived2>());
+}
+```
+
+
+
+
+
+
+
