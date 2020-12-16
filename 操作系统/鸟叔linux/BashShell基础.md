@@ -137,6 +137,11 @@ unset myname<==取消myname这个变量
 
 ![](../../image/aecdf41017fd545b6c4fc52448247029.png)
 
+```shell
+##,%%,//都是贪婪匹配，其他都是非贪婪匹配.
+```
+![avatar](../../image/linux_变量内容的删除与替换.jpg)
+
 ###### 万用字符与特殊符号
 
 ![](../../image/d243c3a3d0566d5711790f18684bb1f1.png)  
@@ -155,11 +160,16 @@ unset myname<==取消myname这个变量
 | --- | --- |
 | cmd1;cmd2 | 顺序执行，无论cmd1是否正确执行，都会执行cmd2 |
 | cmd1 && cmd2 | 若cmd1执行完毕且正确执行，则开始执行cmd2;若cmd1执行完毕且为错误,则cmd2不执行 |
-| cmd1 \| cmd2 | 若cmd1执行完毕且正确执行，则cmd2不执行；若cmd1执行完毕且错误，则开始执行cmd2 |
+| cmd1 \|\| cmd2 | 若cmd1执行完毕且正确执行，则cmd2不执行；若cmd1执行完毕且错误，则开始执行cmd2 |
 
-**识记要点:指令的执行逻辑与程序设计中的执行逻辑类比**
+```shell
+cmd1&&cmd2是两个指令要不都执行，要不都不执行
+cmd1||cmd2是两个指令执行其中一个，一个执行了另一个就不执行了.
 
+cmd1|cmd2是管道命令，注意与cmd1||cmd2进行区分
 ```
+
+```shell
 #先判断 /tmp/abc目录是否存在,若不存在则创建/tmp/abc这个目录，之后在该目录下创建hehe文件
 ls /tmp/abc || mkdir /tmp/abc && touch /tmp/abc/hehe <==等价于(cmd1 || cmd2) && cmd3
 
@@ -170,65 +180,98 @@ ls /tmp/bvirding && echo "exist" || echo "not exist"
 
 ##### 管道命令
 
-管道命令仅能处理经由前面一个指令传来的正确信息，也就是standard output的信息，对于stdandard error并没有直接处理的能力  
+管道命令仅能处理经由前面一个**指令传来的正确信息**，也就是standard output的信息，对于stdandard error并没有直接处理的能力  
 ![](../../image/c3acb9552acd65119cd16bff561e31e2.png)
 
 > 简单讲，就是第一个命令正确的处理结果作为第二个命令的输入，以此类推。
 
-###### 截取命令:cut,grep
+##### 截取命令:cut,grep
 
 > cut -d '分割字符' -f 要取的段  
+
 > 选项与参数:  
+
 > -d: 后面接分割字符，与 -f一起使用  
+
 > -f：依据-d的分割字符将一段讯息分区成为数段，用-f取出第几段的意思  
+
 > ![](../../image/2e99fc4ef0b282200b62d25003eb8703.png)  
+
 > ![](../../image/6346ba3ac495a1584b5f23d992e624c4.png)  
+
 > grep \[-v\] '搜寻字符' \[file or stdin\]  
+
 > 选项与参数:  
+
 > -v:加上-v表示搜寻不包含搜寻字符的行，不加-v则搜寻包含搜寻字符的行  
+
 > ![](../../image/c1f494f1a8656b172d8bc38f23cbae2d.png)
 
-###### 排序命令:sort
+##### 排序命令:sort
 
 > sort \[-futkn\] \[file or stdin\]  
+
 > 选项与参数:  
+
 > -f :忽略大小写的差异，比如A与a视为相同  
+
 > -u:就是uniq,将相同的数据合并，仅显示一行代表  
+
 > -t:与-k配合使用，后面接分割符号，默认按\[tab\]来分割  
+
 > -k:以那个区间来进行排序  
+
 > -n:使用“纯数字”进行排序（默认是以文字体态来进行排序的）  
-> ![](../../image/80158b8db477b87625b7b6490d59bb33.png)
 
-###### 双向重导向:tee
+![](../../image/80158b8db477b87625b7b6490d59bb33.png)
 
-> tee \[-a\] file  
+##### 双向重导向:tee
+
+> tee \[-a\] file 将中间数据保存到文件中
+
 > 选项与参数:  
-> -a:以累加的方式，将数据加入file当中  
-> ![](../../image/36db0d55dd317f89ac01e654e39255b8.png)
 
-###### 字符转换命令:tr
+> -a:以累加的方式，将数据加入file当中  
+
+![](../../image/36db0d55dd317f89ac01e654e39255b8.png)
+
+##### 字符转换命令:tr
 
 tr可以用来删除一段讯息当中的文字，或者是进行文字讯息的替换!
 
 > 删除讯息的用法:  
+
 > tr \[-d\] SET1  
+
 > 选项与参数:  
+
 > -d:删除讯息当中的SET1这个字串  
+
 > 替换讯息的用法:  
+
 > tr SET1 SET2  
+
 > 选项与参数：  
+
 > 将所有的SET1替换为SET2  
+
 > ![](../../image/308538232c93fe1755e490e05acba720.png)
 
-###### 分区命令:split
+##### 分区命令:split
 
 > split \[-bl\] file \[PREFIX\]  
+
 > 选项与参数:  
+
 > -b:后面可以接欲分区成的文件大小，可加单位，例如b,k,m等  
+
 > -l:以行数来进行分区  
+
 > PREFIX:可以作为分区文件的前导文字  
+
 > ![](../../image/ec610e5fd0fe3e821c62f53ad42db788.png)
 
-###### 关于减号-的用途
+
+##### 关于减号-的用途
 
 ![bb9e8a3cd1a2a4ac51ec6a31abd234ba.png](../../image/d1bb8c14633c41629af77fe59bbfcf61.png)
