@@ -149,5 +149,34 @@ namespace std{
 
 //自定义swap函数的典型实现
 //针对Widget数据而设计的class
-
+class WidgetImpl{
+    public:
+        ...
+    private:
+        int a,b,c;
+        std::vector<double> v;
+};
+//下面swap的实现与STL容器有一致性
+//所有STL容器也都提供有public swap成员函数和std::swap特化版本(用以调用前者)
+class Widget{
+    public:
+        ...
+        //成员函数swap
+        void swap(Widget& other){
+            //这个声明很重要
+            using std::swap;
+            //swap前面不要加std::
+            swap(PImpl,other.pImpl);
+        }
+        ...
+    private:
+        WidgetImpl* pImpl;  //指针，所指对象内含Widget数据
+};
+namespace std{
+    //修订后的std::swap特化版本
+    template<>
+    void swap<Widget>(Widget &a,Widget &b){
+        a.swap(b);
+    }
+}
 ```
