@@ -124,6 +124,87 @@ class list{
 
 `list`的核心操作由插入`insert`,删除`erase`,迁移`transfer`（这里所谓的迁移操作，是将某连续范围的元素迁移到某个特定位置之前）等，大部分属于数据结构方面的知识，这里不再赘述。
 
-#### 最后
+### 序列式容器vector
 
-本节中涉及的代码及本人实现的toy级别的`list`可以参考[github](https://github.com/lingqing97/tinySTL/blob/master/stl_wj_list.h).
+#### vector概述
+
+`vector`与`arry`非常相似，不同之处在于`array`是静态空间，一旦大小设定就不能改变;而`vector`是动态空间，随着元素的加入，它的内部机制会自行扩充空间以容纳新元素。
+
+#### vector的迭代器
+
+`vector`维护的是一个连续线性空间，所以使用普通指针就可以作为`vector`的迭代器。所以`vectro`提供的是`Random Access Iterator`。
+
+```cpp
+template<class T,class Alloc=alloc>
+class vector{
+    public:
+        typedef T           value_type;
+        typedef value_type* iterator;       //vector的迭代器
+};
+```
+
+#### vector的数据结构
+
+`vector`所采用的数据结构非常简单：线性连续空间。它以两个迭代器`start`和`finish`表示目前使用空间的头尾，用`end_of_storage`指向整块连续空间的尾段.
+
+```cpp
+template<class T,class Alloc=alloc>
+class vector{
+    //...
+    protected:
+        iterator start;         //表示目前使用空间的头
+        iterator finish;        //表示目前使用空间的尾
+        iterator end_of_storage;//表示目前可用空间的尾
+};
+```
+
+#### vector的构造与内存管理
+
+当备用空间不足时，`vector`采用二倍扩充的方式重新配置，即`申请两倍大的新空间`、`移动数据`、`释放原空间`。采用这种方式，可以使得`push_back()`操作时间复杂度的平摊代价为`O(1)`, 其代码如下所示:
+
+```cpp
+template<class T,class Alloc>
+void vector<T,Alloc>::insert_aux(iterator position,const T& x){
+    if(finish!=end_of_storage){
+        //还有备用空间
+        //在备用空间起始处构造一个元素，并以vector最优一个元素值为其初值
+        wj::construct(finish,*(finish-1));
+        //调整水位
+        ++finish;
+        T x_copy=x;
+        //将positionk和其后面元素的位置往后挪
+        std::copy_backward(position,finish-2,finish-1);
+        *position=x_copy;
+    }
+    else{
+        //已无备用空间
+        const size_type old_size=size();
+        //采用二倍扩充的原则
+        const size_type len=old_size!=0?2*old_size:1;
+        iterator new_start=data_allocator::allocate(len);
+        iterator new_finish=new_start;
+        try{
+            //复制前半段内容到新vector
+            new_finish=std::uninitialized_copy(start,position,new_start);
+            //为新元素设定初值x
+            wj::construct(new_finish,x);
+            ++new_finish;
+            //复制后半段内容到新vector
+            new_finish=std::uninitialized_copy(position,finish,new_finish);
+        }
+        catch(...){
+            //处理异常
+            wj::destory(new_start,new_finish);
+            data_allocator::deallocate(new_start,len);
+            throw;
+        }
+        //析构并释放原vector
+        wj::destory(begin(),end());
+        deallocate();
+        //调整迭代器，指向新vector
+        start=new_start;
+        finish=new_finish;
+        end_of_storage=new_start+len;
+    }
+}
+```
