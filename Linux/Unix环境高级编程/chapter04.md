@@ -1,4 +1,7 @@
+[toc]
+
 ### chapter04 文件和目录
+
 
 #### 函数stat,fstat,fstatat和lstat
 
@@ -129,4 +132,233 @@ int main(int ac,char* av[])
 
 
 #### 新文件和目录的所有权
+
+新文件的用户ID设置为进程的有效用户ID。关于组ID，POSIX.1允许实现选择下列之一作为新文件的组ID。
+
+1. 新文件的组ID可以是进程的有效组ID
+2. 新文件的组ID可以是它所在目录的组ID
+
+#### 函数access和faccessat
+
+有时，进程也希望按其实际用户ID和实际组ID来测试其访问能力。例如，当一个进程使用设置用户ID或设置组ID功能作为另一个用户（或组）运行时，就可能会有这种需要。
+
+通过`access`和`faccessat`可以判断实际用户是否有相应权限:
+
+```cpp
+#include<unistd.h>
+
+int access(const char* pathname,int mode);
+
+int faccessat(int fd,const char* pathname,int mode,int flag);
+```
+
+其中，如果测试文件是否存在,`mode`就为`F_OK`;否则`mode`是下表所列常量的按位或:
+
+| mode | 说明 |
+| :----: | :----:
+| R_OK | 测试读权限 |
+| W_OK | 测试写权限 |
+| X_OK | 测试执行权限 |
+
+##### 实例：access函数实例
+
+```cpp
+#include<stdio.h>
+#include<unistd.h>
+#include<fcntl.h>
+
+#define oops(m,x) { perror(m); exit(x); }
+
+int main(int ac,char* av[])
+{
+    if(ac!=2){
+        fprintf(stderr,"usage: a.out <pathname>");
+        exit(1);
+    }
+    if(access(av[1],R_OK)<0){           //测试读权限
+        printf("read access ERROR\n");
+    }
+    else{
+        printf("read access OK\n");
+    }
+    if(open(av[1],O_RDONLY)<0){
+        oops("open",2);
+    }
+    else{
+        printf("open for reading OK\n");
+    }
+    exit(0);
+}
+```
+
+#### 函数umask
+
+`umask`函数为进程设置文件模式创建屏蔽字，并返回之前的值。
+
+```cpp
+#include<sys/stat.h>
+
+mode_t umask(mode_t cmask);
+```
+
+##### 实例:umask函数实例
+
+```cpp
+#include<stdio.h>
+#include<unistd.h>
+#include<fcntl.h>
+
+#define RWRWRW (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
+
+int main(void)
+{
+    umask(0);
+    if(creat("foo",RWRWRW)<0)
+        printf("creat error\n");
+    umask(S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);   //umask值禁止所有组和其他用户的读写权限
+    if(creat("bar",RWRWRW)<0)
+        printf("creat error\n");
+    exit(0);
+}
+```
+
+需要注意的是，更改进程的文件模式创建屏蔽字并不影响其父进程(常常是shell)的屏蔽字
+
+#### 函数chmod、fchmod和fchmodat
+
+`chmod`,`fchmod`和`fchmodat`这3个函数使我们可以更改现有文件的访问权限
+
+```cpp
+#include<sys/stat.h>
+
+int chmod(const char* pathname,mode_t mode);
+int fchmod(int fd,mode_t mode);
+int fchmodat(int fd,const char* pathname,mode_t mode,int flag);
+```
+
+其中参数`mode`是前面的文件权限位。且为了改变一个文件的权限位，进程的有效用户ID必须等于文件的所有者ID，或者进程必须具有超级用户权限。
+
+#### 粘着位
+
+`S_ISVTX`位被称为`粘着位`(sticky bit).后来的`UNIX`版本称它为`保存正文位`.
+
+现在的系统扩展了粘着位的使用范围，`Single UNIX Specification`允许对目录设置粘着位。如果**对一个目录设置了粘着位**，只有**对该目录具有写权限的用户**并且满足下列条件之一，才能删除或重命名该目录下的文件:
+
+* 拥有此文件
+* 拥有此目录
+* 是超级用户
+
+目录`/tmp`和`/var/tmp`是设置粘着位的典型候选者————任何用户都可在这两个目录中创建文件。任一用户(用户、组合其他)对这两个目录的权限通常都是读、写和执行。但是用户不应能删除或重命名属于其他人的文件，为此在这两个目录的文件模式中都设置了粘着位。
+
+#### 函数chown,fchown,fchownat和lchown
+
+下面几个`chown`函数可用于更改文件的用户ID和组ID。如果两个参数`owner`或`group`中的任意一个是`-1`,则对应的ID不变:
+
+```cpp
+#include<unistd.h>
+
+int chown(const char* pathname,uid_t owner,git_t group);
+int fchown(int fd,uid_t owner,git_t group);
+int fchownat(int fd,const char* pathname,uid_t owner,git_t group,int flag);
+int lchown(const char* pathname,uid_t owner,git_t group);
+```
+
+> 这里的`lchown`可以更改符号链接本身，UNIX中很多命名以`l-`开头的函数都可以改变符号链接本身，而不是跟随符号链接.
+
+#### 文件长度
+
+`stat`结构成员`st_size`表示以字节为单位的文件的长度。此字段只对普通文件、目录文件和符号链接有意义:
+
+* 对于普通文件，其文件长度可以是0，在开始读这种文件时，将得到文件结束(end-of-file)指示
+* 对于目录，文件长度通常是一个数(如16或512)的整倍数
+* 对于符号链接，文件长度是在文件名中的实际字节数，比如`lib->user/lib`这样的符号链接，文件长度7就是路径名`usr/lib`的长度
+
+空洞是由所设置的偏移量超过文件尾端，并写入某些数据后造成的。**需要注意的是，空洞不会实际写入字节数据，但是如果使用实用程序复制这个文件，那么所有这些空洞都会被填满，其中所有实际数据字节皆填写为0**.
+
+#### 文件截断
+
+为了截断文件可以调用函数`truncate`和`ftruncate`,所谓文件截断，可以理解为将文件长度设为指定值。
+
+```cpp
+#include<unistd.h>
+
+int truncate(const char* pathname,off_t length);
+
+int ftruncate(int fd,off_t length);
+```
+
+#### 文件系统
+
+我们可以把一个磁盘分成一个或多个分区。每个分区可以包含一个文件系统。i节点是固定长度的记录项，它包含有关文件的大部分信息。
+
+![avatar](../iamge/../../image/unix_磁盘_分区_文件系统.jpg)
+
+更加详细的柱面组合i节点核数据块如下图所示:
+
+![avatar](../image/../../image/unix_i节点_数据块.jpg)
+
+以下几点需要注意:
+
+1. 每个i节点中都有一个链接计数，其值是指向该i节点的目录项数。只有当链接计数减少至0时，才可删除该文件。在stat结构中，链接计数包含在`st_nlink`成员中，这种链接类型也称为`硬连接`。在POSIX.1中`LINK_MAX`指定了一个文件链接数的最大值。
+2. 另外一种链接类型称为`符号链接`.`符号链接`文件的实际内容包含了该符号链接所指向的文件的名字
+3. i节点包含了文件有关的所有信息：文件类型、文件访问权限位、文件长度和指向文件数据块的指针等。`stat`结构中的大多数信息都取自i节点，**只有两项重要数据存放在目录项中:文件名和i节点编号**.
+4. 因为目录项中的i节点编号指向同一文件系统中的相应i节点，一个目录项不能指向另一个文件系统的i节点
+5. 当在不更换文件系统的情况下一个文件重命名时，该文件的实际内容并未移动，只需构造一个指向现有i节点的新目录项，并删除老的目录项。链接计数不会改变。
+
+#### 函数link、linkat、unlink、unlinkat和remove
+
+任何一个文件可以有多个目录项指向其i节点。创建一个指向现有文件的(硬)链接的方法是使用`link`函数或`linkat`函数
+
+```cpp
+#include<unistd.h>
+
+int link(const char* existingpath,const char* newpath);
+int linkat(int efd,const char* existingpath,int nfd,const char* newpath,int flag);
+```
+
+这两个函数创建一个新目录项`newpath`,它引用现有文件`existingpath`.
+
+当现有文件是符号链接时，由`flag`参数来控制`linkat`函数是创建指向现有符号链接的链接还是创建指向现有符号链接所指向的文件的链接。如果在`flag`参数中设置了`AT_SYMLINK_FOLLOW`标志，就创建指向符号链接目标的链接。如果这个标志被清除了，则创建一个指向符号链接本身的链接。
+
+为了删除一个现有的目录项，可以调用`unlink`函数:
+
+```cpp
+#include<unistd.h>
+
+int unlink(const char* pathname);
+int unlink(int fd,const char* pathname,int flag);
+```
+
+当链接计数达到0时，该文件的内容才可被删除。另一个条件也会阻止删除文件的内容————只要有进程打开了该文件，其内容也不能删除。关闭一个文件时，内核首先检查打开该文件的进程个数；如果这个计数达到0，内核再去检查其链接计数；如果计数也是0，那么就删除该文件的内容。
+
+我们也可以用`remove`函数解除对一个文件或目录的链接。对于文件，`remove`的功能与`unlink`相同。对于目录,`remove`的功能与`rmdir`相同
+
+```cpp
+#include<stdio.h>
+
+int remove(const char* pathname);
+```
+
+##### 实例:打开一个文件，然后unlink它
+
+```cpp
+#include "apue.h"
+#include<fcntl.h>
+
+int main(void)
+{
+    if(open("tempfile",O_RDWR)<0)
+        err_sys("open error");
+    if(unlink("tempfile")<0)
+        err_sys("unlinnk error");
+    printf("file unlinked\n");
+    sleep(15);
+    printf("done\n");
+    exit(0);
+}
+```
+
+`unlink`这种特性可以用于处理程序崩溃时，创建的临时文件也不会遗留下来。
+
+#### 函数rename和renameat
 
