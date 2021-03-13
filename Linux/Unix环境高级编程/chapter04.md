@@ -362,3 +362,86 @@ int main(void)
 
 #### 函数rename和renameat
 
+文件或目录可以用`rename`函数或者`renameat`函数进行重命名
+
+```cpp
+#include<stdio.h>
+
+int rename(const char* oldname,const char* newname);
+int renameat(int oldfd,const char* oldname,int newfd,const char* newname);
+```
+
+使用`rename`有以下几点需要注意:
+
+1. 如若`oldname`或`newname`引用符号链接，则处理的是符号链接本身，而不是它所引用的文件
+2. 不能对`.`或`..`重命名。更确切地说，`.`和`..`都不能出现在`oldname`和`newname`的最后部分
+3. 作为一个特例，如果`oldname`和`newname`引用同一文件，则函数不做任何更改而成功返回
+
+#### 符号链接
+
+符号链接是对一个文件的间接指针，它与上一节所述的硬连接有所不同，硬链接直接指向文件的i节点。引入符号链接的原因是为了避免硬链接的一些限制：
+
+1. 硬链接通常要求链接和文件位于同一文件系统中
+2. 只有超级用户才能创建指向目录的硬链接
+
+当使用以名字引用文件的函数时，应当了解该函数是否处理符号链接。也就是该函数是否跟随符号链接到达它所链接的文件。如若该函数具有处理符号链接的能力，则其路径名参数引用由符号链接指向的文件。否则，一个路径名参数引用链接本身，而不是由该链接指向的文件。
+
+各个函数对符号链接的处理如下图所示:
+
+![avatar](../image/../../image/unix_函数对符号链接的处理.jpg)
+
+使用符号链接可能在文件系统中引入循环。大多数查找路径名的函数在这种情况发生时都将出错返回，`errno`值为`ELOOP`.对于符号链接造成的循环很容易消除，因为`unlink`并不跟随符号链接，所以可以用`unlink`消除循环。但是如果创建了构成循环的硬循环，那么就很难消除它，这就是为什么`link`函数不允许构造指向目录的硬链接的原因。
+
+#### 创建和读取符号链接
+
+可以用`symlink`或`symlinkat`函数创建一个符号链接:
+
+```cpp
+#include<unistd.h>
+
+int symlink(const char* actualpath,const char* sympath);
+int symlink(const char* actualpath,int fd,const char* sympath);
+```
+
+函数创建一个指向`actualpath`的新目录项`sympath`,在创建此符号链接时，并不要求`actualpath`已经存在，并且`actualpath`和`sympath`并不需要位于同一文件系统中
+
+因为`open`函数跟随符号链接，所以需要有一种方法打开该链接本身，并读该链接中的名字。`readlink`和`readlinkat`函数提供了这种功能
+
+```cpp
+#include<unistd.h>
+
+ssize_t readlink(const char* restrict pathname,char* restrict buf,size_t bufsize);
+ssize_t readlinkat(int fd,const char* restrict pathname,char* restrict buf,size_t bufsize);
+
+```
+
+#### 文件的时间
+
+对每个文件都维护了3个时间字段，分别是`st_atim`(文件数据的最后访问时间)、`st_mtim`(文件数据的最后修改时间)、`st_ctim`(i节点状态的最后更改时间).而每个文件属性所保存的实际精度依赖于文件系统的实现，对于把时间戳记录在秒级的文件系统来说，纳秒这个字段就会被填充为0.对于时间戳的记录精度高于秒级的文件系统来说，不足秒的值被转换成纳秒并记录在纳秒这个字段中.
+
+注意，修改时间(st_mtim)和状态更改时间(st_ctim)之间的区别，修改时间是文件内容最后一次被修改的时间，状态更改时间是该文件的i节点最后一次被修改的时间。同时，系统并不维护一个i节点的最后一次访问时间，所以`access`和`stat`函数并不更改这3个时间中的任一个。
+
+#### 函数futimens、utimensat和utimes
+
+```cpp
+#include<sys/stat.h>
+
+int futimens(int fd,const struct timespec times[2]);
+int utimensat(int fd,const char* path,const struct timespec times[2],int flag);
+```
+
+这两个函数的`times`数组参数的第一个元素包含访问时间，第二元素包含修改时间，当调用这两个函数时，状态更改时间会自动更新。
+
+SUS标准定义`utimes`函数修改时间:
+
+```cpp
+#include<sys/time.h>
+
+int utimes(const char* pathname,const struct timeval times[2]);
+```
+
+同理，使用`utimes`时，状态更新时间会自动更新。
+
+
+#### 函数mkdir、mkdirat和rmdir
+
