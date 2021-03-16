@@ -443,5 +443,64 @@ int utimes(const char* pathname,const struct timeval times[2]);
 同理，使用`utimes`时，状态更新时间会自动更新。
 
 
-#### 函数mkdir、mkdirat和rmdir
+#### 函数mkdir、rmdir、opendir和readdir
+
+用`mkdir`函数创建目录，用`rmdir`函数删除目录,用`opendir`打开目录,用`readdir`读取目录项
+
+```cpp
+#include<sys/stat.h>
+#include<unistd.h>
+#include<dirent.h>
+
+int mkdir(const char* pathname,mode_t mode);
+int rmdir(const char* pathname);    //可以删除一个空目录，空目录是只包含.和..这两项的目录
+DIR* opendir(const char* pathname);
+struct dirent* readdir(DIR* dp);
+```
+
+其中`dirent`的定义至少包含下列两个成员:
+
+```cpp
+ino_t d_ino;        /* i-node number */
+char d_name[];      /* null-terminated filename */
+```
+
+#### 设备特殊文件
+
+每个文件系统所在的存储设备都由其主、次设备号表示：主设备号标识设备驱动程序，次设备号标识特定的子设备。
+
+系统中与每个文件名关联的`st_dev`值是文件系统的设备号，该文件系统包含了这一文件名以及与其对应的i节点。
+
+只有字符特殊文件和块特殊文件才有`st_rdev`值，此值包含实际设备的设备号。
+
+我们通常可以使用两个宏:`major`和`minor`来访问主、次设备号。
+
+##### 打印设备号
+
+```cpp
+#include "aput.h"
+#ifdef SOLARIS
+#include<sys/mkdev.h>
+#endif
+
+int main(int argc,char* argv)
+{
+    int i;
+    struct stat buf;
+    for(i=1;i<argc;i++)
+    {
+        printf("%s: ",argv[i]);
+        if(stat(argv[i],&buf)<0){
+            err_ret("stat error");
+            continue;
+        }
+        printf("dev = %d/%d",major(buf.st_dev),minor(buf.st_dev));
+        if(S_ISCHR(buf.st_mode) || S_ISBLK(buf.st_mode)){
+            printf(" (%s) rdev=%d/%d",(S_ISCHR(buf.st_mode))?"character":"block",major(buf.st_rdev),minor(buf.st_rdev));
+        }
+        printf("\n");
+    }
+    exit(0);
+}
+```
 
