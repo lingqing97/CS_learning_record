@@ -46,51 +46,27 @@
 
 #### 函数调用
 
-调用`fileno`获得与文件指针fp关联的文件描述符
 
 ```cpp
 #include<stdio.h>
 
-int fileno(FILE* fp);
-```
+int fileno(FILE* fp);  //调用`fileno`获得与文件指针fp关联的文件描述符
 
-使用`fflush`将流所有未写的数据都被传送至内核。
+int fflush(FILE* fp);  //使用`fflush`将流所有未写的数据都被传送至内核。
 
-```cpp
-#include<stdio.h>
-
-int fflush(FILE* fp);
-```
-
-使用`fopen`以`r`、`w`等`type`打开路径名为`pathname`的文件
-
-调用`fclose`关闭一个打开的流。注意，当一个进程正常终止时(直接调用exit函数，或从main函数返回)，则**所有带未写缓冲数据的标准I/O流都被冲洗，所有打开的标准I/O流都被关闭**。
-
-```cpp
-#include<stdio.h>
-
-FILE* fopen(const char* restrict pathname ,const char* restrict type);
+FILE* fopen(const char* restrict pathname ,const char* restrict type);  //使用`fopen`以`r`、`w`等`type`打开路径名为`pathname`的文件
 
 FILE* fdopen(int fd,const char* type);      //取一个已有的文件描述符，常用于由创建管道和网络通信管道函数返回的描述符
 
-int fclose(FILE* fp);
-```
+int fclose(FILE* fp); //调用`fclose`关闭一个打开的流。注意，当一个进程正常终止时(直接调用exit函数，或从main函数返回)，则**所有带未写缓冲数据的标准I/O流都被冲洗，所有打开的标准I/O流都被关闭**。
 
-在标准I/O中打印错误的通用函数如下:
-
-```cpp
-#include<stdio.h>
-
+//在标准I/O中打印错误的通用函数如下:
 int ferror(FILE* fp);
 int feof(FILE* fp);
 
 void clearerr(FILE* fp);    //清除出错标志和文件结束标志
-```
 
-常用非格式化I/O如下:
-
-```cpp
-#include<stdio.h>
+//常用非格式化I/O如下:
 
 //每次一个字符的I/O
 int getc(FILE* fp);
@@ -114,12 +90,7 @@ int fputs(const char* restrict str,FILE* restrict fp);
 size_t fread(void* restrict ptr,size_t size,size_t nobj,FILE* restrict fp);
 size_t fwrite(const void* restrict ptr,size_t size,size_t nobj,FILE* restrict fp);
 
-```
-
-格式化输出和格式化输入函数如下:
-
-```cpp
-#include<stdio.h>
+//格式化输出和格式化输入函数如下:
 
 //格式化输出
 int printf(const char* restrict format,...);    //输出到标准输出
@@ -133,7 +104,7 @@ int fscanf(FILE* restrict fd,const char* restrict format,...); //从文件指针
 int sscanf(const char* restrict buf,const char* restrict format,...); //从缓冲区buf中获取输入
 ```
 
-使用`tmpnam`和`tmpfile`创建临时文件的实例:
+##### 使用`tmpnam`和`tmpfile`创建临时文件的实例
 
 ```cpp
 #include<stdio.h>
@@ -168,7 +139,7 @@ int main(void)
 }
 ```
 
-使用`mkstemp`创建临时文件的实例:
+##### 使用`mkstemp`创建临时文件的实例:
 
 ```cpp
 #include<stdio.h>
