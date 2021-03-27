@@ -166,6 +166,143 @@ int pause(void);
 
 只有执行了一个信号处理程序并从其返回时，`pause`才返回.
 
+#### 信号集、函数sigprocmask和函数sigpending
+
+我们用`信号集`(Unix中用数据结构`sigset_t`来表示)来表示多个信号，如下所示定义了5个处理信号集的函数.
+
+```cpp
+#include<signal.h>
+
+//4个函数返回值：若成功，返回0；若出错，返回-1
+int sigemptyset(sigset_t* set);                     //清空所有信号
+int sigfillset(sigset_t* set);                      //包含所有信号
+int sigaddset(sigset_t* set,int signo);             //加入某个信号
+int sigdelset(sigset_t* set,int signo);             //删除某个信号
+
+//返回值：若真，返回1；若假，返回0
+int sigismember(const sigset_t* set,int signo);     //测试一个信号位是否设置
+```
+
+一个进程的`信号屏蔽字`规定了当前阻塞而不能递送到该进程的信号集。调用函数`sigprocmask`可以检测或更改，或同时进行检测和更改进程的信号屏蔽字。
+
+```cpp
+#include<signal.h>
+
+//set是要设置的信号屏蔽字,oset是之前的信号屏蔽字,how指明了以何种方式设置信号屏蔽字
+int sigprocmask(int how,const sigset_t *restrict set,sigset_t* restrict oset);
+```
+
+> 注意,`sigprocmask`是仅为单线程进程定义的，处理多线程进程中信号的屏蔽使用另一个函数。
+
+##### 实例：为进程打印信号屏蔽字
+
+```cpp
+#include<stdio.h>
+#include<unistd.h>
+#include<signal.h>
+#include<errno.h>
+
+void pr_mask(const char* str)
+{
+    sigset_t sigset;
+    int errno_save;
+
+    /* we can be called by signal handlers */
+    errno_save=errno;
+    if(sigprocmask(0,NULL,&sigset)<0){
+        fprintf(stderr,"sigprocmask error.\n");
+    }
+    else{
+        printf("%s",str);
+        if(sigismember(&sigset,SIGINT))
+            printf(" SIGINT");
+        if(sigismember(&sigset,SIGQUIT))
+            printf("SIGQUIT");
+        if(sigismember(&sigset,SIGUSR1))
+            printf("SIGUSR1");
+        if(sigismember(&sigset,SIGUSR2))
+            printf("SIGUSR2");
+
+        printf("\n");
+    }
+
+    errno=errno_save;   /* restore errno */
+}
+```
+
+函数`sigpending`可以获取对当前进程未决的信号集
+
+```cpp
+#include<signal.h>
+int sigpending(sigset_t *set);
+```
+
+##### 实例：信号设置和sigprocmask实例
+
+```cpp
+#include<stdio.h>
+#include<unistd.h>
+#include<signal.h>
+
+static void sig_quit(int);
+
+int main(void)
+{
+    sigset_t newmask,oldmask,pendmask;
+
+    if(signal(SIGQUIT,sig_quit)==SIG_ERR)
+        fprintf(stderr,"can't catch SIGQUIT.\n");
+
+    sigemptyset(&newmask);
+    sigaddset(&newmask,SIGINT);
+
+    if(sigprocmask(SIG_BLOCK,&newmask,&oldmask)<0)
+        fprintf(stderr,"SIG_BLOCK error.\n");
+
+    sleep(5);
+
+    if(sigpending(&pendmask)<0)
+        fprintf(stderr,"sigpending error.\n");
+    if(sigismember(&pendmask,SIGINT))
+        printf("SIGQUTI pending.\n");
+
+    //sigprocmask只是暂时将信号置于未决状态
+    //当将信号从信号屏蔽字移除后，会传递到进程
+    if(sigprocmask(SIG_SETMASK,&oldmask,NULL)<0)
+        fprintf(stderr,"SIG_SETMASK error.\n");
+
+    printf("SIGQUIT unblocked.\n");
+
+    sleep(5);
+    exit(0);
+}
+
+static void
+sig_quit(int signo)
+{
+    printf("caught SIGQUIT\n");
+    if(signal(SIGQUIT,SIG_DFL)==SIG_ERR)
+        fprintf(stderr,"can't reset SIGQUIT.\n");
+}
+```
+
+`sigaction`函数的功能是检查或修改与指定信号向关联的处理动作。此函数取代了UNIX早期版本使用的`signal`函数
+
+```cpp
+#include<signal.h>
+
+//act非空则修改信号，否则查看该信号的上一个动作
+int sigaction(int signo,const struct sigaction* restrict act,struct sigaction* restrict oact);
+```
+
+关于`sigaction`有以下几点需要注意:
+
+1. 可以将触发事件的信号加入到信号屏蔽字(`signal`是默认)
+2. 阻塞了发生多次的信号，当该信号解除阻塞时，只被传递一次（除非对该信号进行了排队处理）
+3. 触发信号处理函数后，信号处理方式不会恢复为默认
+
+#### 函数sigsetjmp和siglongjmp
+
 
 
 #### 常见信号总结
