@@ -303,6 +303,173 @@ int sigaction(int signo,const struct sigaction* restrict act,struct sigaction* r
 
 #### 函数sigsetjmp和siglongjmp
 
+在信号处理程序中经常调用`longjmp`函数以返回到程序的主循环中，而不是从该处理程序返回。但是由于进入信号处理程序时，当前信号是被屏蔽的，从信号处理程序返回时该信号是否还被屏蔽是不确定的,为了避免这种不确定性，我们使用`sigsetjmp/siglongjmp`来替代`setjmp/longjmp`
 
+```cpp
+#include<setjmp.h>
+
+int sigsetjmp(sigjmp_buf env,int savemask);     //savemask非0时恢复保存的信号屏蔽字
+void siglongjmp(sigjmp_buf env,int val);        //val是jump之后的返回值
+
+```
+
+##### 实例：使用siglongjmp恢复信号屏蔽字
+
+```cpp
+#include<stdio.h>
+#include<unistd.h>
+#include<setjmp.h>
+#include<time.h>
+#include<signal.h>
+#include<errno.h>
+
+#define oops(m,x) { perror(m); exit(x); }
+
+static void sig_usr1(int);
+static void sig_alrm(int);
+static sigjmp_buf jmpbuf;
+static volatile sig_atomic_t canjump;
+
+void pr_mask(const char* str)
+{
+    sigset_t sigset;
+    int errno_save;
+
+    /* we can be called by signal handlers */
+    errno_save=errno;
+    if(sigprocmask(0,NULL,&sigset)<0){
+        fprintf(stderr,"sigprocmask error.\n");
+    }
+    else{
+        printf("%s",str);
+        if(sigismember(&sigset,SIGINT))
+            printf(" SIGINT");
+        if(sigismember(&sigset,SIGQUIT))
+            printf(" SIGQUIT ");
+        if(sigismember(&sigset,SIGUSR1))
+            printf(" SIGUSR1 ");
+        if(sigismember(&sigset,SIGUSR2))
+            printf(" SIGUSR2 ");
+        if(sigismember(&sigset,SIGALRM))
+            printf(" SIGALRM ");
+
+        printf("\n");
+    }
+
+    errno=errno_save;   /* restore errno */
+}
+
+
+int main(void)
+{
+    if(signal(SIGUSR1,sig_usr1)==SIG_ERR)
+        oops("signal(SIGUSR1) error.\n",1);
+    if(signal(SIGALRM,sig_alrm)==SIG_ERR)
+        oops("signal(SIGALRM) error.\n",2);
+
+    pr_mask("starting main: ");
+
+    if(sigsetjmp(jmpbuf,1)){
+        pr_mask("ending main: ");
+        exit(0);
+    }
+
+    canjump=1;
+
+    for(;;)
+        pause();
+}
+
+static void
+sig_usr1(int signo)
+{
+    time_t starttime;
+
+    if(canjump==0)
+        return;
+
+    pr_mask("starting sig_usr1: ");
+
+    alarm(3);
+    starttime=time(NULL);
+    for(;;)
+        if(time(NULL)>starttime+5)
+            break;
+
+    pr_mask("finishing sig_usr1: ");
+
+    canjump=0;
+    siglongjmp(jmpbuf,1);
+}
+
+static void
+sig_alrm(int signo)
+{
+    pr_mask("in sig_alrm: ");
+}
+```
+
+上述程序输出:
+
+![avatar](../image/../../image/unix_10_10_20.jpg)
+
+
+#### 函数abort
+
+`abort`函数的功能是使程序异常终止，此函数将`SIGABRT`信号发送给调用进程（进程不应忽略此信号）
+
+```cpp
+#include<stdlib.h>
+
+//发送SIGABRT给调用进程，并要求该进程执行相应的信号处理函数，且进程应在该信号处理函数中结束自己
+void abort(void);
+```
+
+#### 函数sleep
+
+`sleep`函数使得程序挂起
+
+```cpp
+#include<unistd.h>
+
+//返回值：0或未休眠完的秒数
+unsigned int sleep(unsigned int seconds);
+
+```
+
+`sleep`函数并不是可靠，当以下两个条件发生时该函数会释放挂起的进程:
+
+1. 已经过了seconds所指定的墙上时钟时间
+2. 调用进程捕捉到一个信号并从信号处理程序返回
+
+#### 作业控制信号
+
+POSIX.1认为有以下6个与作业控制有关的信号:
+
+* `SIGCHLD`: 子进程已停止或终止
+* `SIGCONT`: 如果进程已停止，则使其继续运行
+* `SIGSTOP`: 停止信号（不能被捕捉或忽略）
+* `SIGTSTP`: 交互式停止信号
+* `SIGTTIN`: 后台进程组成员读控制终端
+* `SIGTTOU`: 后台进程组成员写控制终端
+
+在作业控制信号间有某些交互。当对一个进程产生4种停止信号(`SIGTSTP`,`SIGSTOP`,`SIGTTIN`或`SIGTTOU`)中的任意一种时，对该进程的任一未决`SIGCONT`信号就被丢弃。与此类似，当对一个进程产生`SIGCONT`信号时，对同一进程的任一未决停止信号被丢弃
 
 #### 常见信号总结
+
+| 信号 | 说明 |
+| :---: | :---: |
+| SIGABRT | 调用abort函数产生此信号，使得进程异常终止 |
+| SIGALRM | 当用alarm函数设置的定时器超时时产生此信号 |
+| SIGCHLD | 在一个进程终止或停止时，发送此信号给给其父进程 |
+| SIGCONT | 此作业控制信号发送给处于停止状态需要继续运行的进程 |
+| SIGINT | 当用户按中断键(`Ctrl+C`)时，终端驱动程序产生此信号并发送给前台进程组中的每个进程 |
+| SIGPIPE | 如果在管道的读进程已终止时写管道，则产生此信号 |
+| SIGQUIT | 当用户在终端上按退出键(`ctr\`)时，中断驱动程序产生此信号，并发送给前台进程组中的所有进程 |
+| SIGSTOP | 这是一个作业控制信号，它停止一个进程 |
+| SIGTERM | 这是由kill命令发送的系统默认终止信号 |
+| SIGTSTP | 交互停止信号 |
+| SIGTTIN | 当一个后台进程组进程试图读其控制终端时，终端驱动程序产生此信号 |
+| SIGTTOU | 当一个后台进程组进程试图写其控制终端时，终端驱动程序产生此信号 |
+| SIGUSR1 |  这是一个用户定义的信号，可用于应用程序 |
+| SIGUSR2 |  这是一个用户定义的信号，可用于应用程序 |
