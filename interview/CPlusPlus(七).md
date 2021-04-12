@@ -33,7 +33,6 @@ ri=8;
 反汇编得到:
 
 ```cpp
-0x100000f96 <main()+6>  movl   $0x0,-0x4(%rbp)
 0x100000f9d <main()+13> movl   $0x5,-0x8(%rbp)
 0x100000fa4 <main()+20> lea    -0x8(%rbp),%rcx
 0x100000fa8 <main()+24> mov    %rcx,-0x10(%rbp)
@@ -52,7 +51,6 @@ int* const pi=&i;
 反汇编得到的还是
 
 ```cpp
-0x100000f96 <main()+6>  movl   $0x0,-0x4(%rbp)
 0x100000f9d <main()+13> movl   $0x5,-0x8(%rbp)
 0x100000fa4 <main()+20> lea    -0x8(%rbp),%rcx
 0x100000fa8 <main()+24> mov    %rcx,-0x10(%rbp)
