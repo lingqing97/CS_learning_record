@@ -22,3 +22,43 @@
 参考:[知乎回答:C++中，引用和指针的区别是什么?](https://www.zhihu.com/question/37608201)
 
 
+对于代码
+
+```cpp
+int i=5;
+int &ri=i;
+ri=8;
+```
+
+反汇编得到:
+
+```cpp
+0x100000f96 <main()+6>  movl   $0x0,-0x4(%rbp)
+0x100000f9d <main()+13> movl   $0x5,-0x8(%rbp)
+0x100000fa4 <main()+20> lea    -0x8(%rbp),%rcx
+0x100000fa8 <main()+24> mov    %rcx,-0x10(%rbp)
+0x100000fac <main()+28> mov    -0x10(%rbp),%rcx
+0x100000fb0 <main()+32> movl   $0x8,(%rcx)
+```
+
+而对于代码
+
+```cpp
+int i=5;
+int* const pi=&i;
+*pi=8;
+```
+
+反汇编得到的还是
+
+```cpp
+0x100000f96 <main()+6>  movl   $0x0,-0x4(%rbp)
+0x100000f9d <main()+13> movl   $0x5,-0x8(%rbp)
+0x100000fa4 <main()+20> lea    -0x8(%rbp),%rcx
+0x100000fa8 <main()+24> mov    %rcx,-0x10(%rbp)
+0x100000fac <main()+28> mov    -0x10(%rbp),%rcx
+0x100000fb0 <main()+32> movl   $0x8,(%rcx)
+```
+
+对比后可以发现，在汇编底层，对引用的处理和对常量指针的处理一模一样。所以可以得出结论：**引用可以理解为加了各种限制（比如必须初始化、必须指向一个对象）的常量指针。**
+
