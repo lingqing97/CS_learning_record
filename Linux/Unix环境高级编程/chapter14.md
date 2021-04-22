@@ -69,3 +69,101 @@ close(fd2);     //在close(fd2)后，在fd1上设置的锁会被释放
 
 #### I/O多路转接
 
+`I/O多路转接`:先构建一张我们感兴趣的描述符（通常都不止一个）的列表，然后调用一个函数，直到这些描述符中的一个已准备好进行I/O时，该函数才返回。
+
+`poll`,`pselect`和`select`这3个函数使我们能够执行I/O多路转接。在从这些函数返回时，进程会被告知哪些描述符已准备好可以进行I/O.
+
+在所有POSIX兼容的平台上，`select`函数使我们可以执行I/O多路转接。传给`select`的参数告诉内核:
+
+1. 我们所关心的描述符
+2. 对于每个描述符我们所关心的条件（是否想从一个给定的描述符读，是否想写一个给定的描述符，是否关心一个给定描述符的异常条件）
+3. 愿意等待多长时间（可以永远等待，等待一个固定的时间或者根本不等待）
+
+```cpp
+#include<sys/select.h>
+
+//maxfdp1d:最大文件描述符编号加1
+int select(int maxfdp1, fd_set* restrict readfds, fd_set* restrict writefds, struct timeval* restrict tvptr);
+```
+
+`poll`函数类似于`select`,但是程序员接口有所不同,`poll`函数可用于任何类型的文件描述符.
+
+```cpp
+#icnlude<poll.h>
+
+//fdarray: 描述符集
+//nfds: fdarray元素数
+//timeout: 等待时间
+int poll(struct pollfd fdarray[],nfds_t nfds,int timeout);
+
+struct pollfd{
+    int fd;         //文件描述符
+    short events;   //感兴趣的事件
+    short revents;  //由内核设置返回，用于说明描述符发生了哪些时间
+};
+```
+
+#### POSIX异步I/O
+
+`异步I/O`:利用这种技术，进程可以告诉内核，当描述符准备好可以进行I/O时，用一个信号通知它。
+
+POSIX异步I/O接口使用`AIO`控制块来描述I/O操作，`aiocb`结构定义了AIO控制块，该结构至少包括下面这些字段:
+
+```cpp
+struct aiocb{
+    int aio_fildes;     //文件描述符
+    off_t aio_offset;
+    volatile void *aio_buf;
+    size_t aio_nbtyes;
+    int aio_reqprio;
+    struct sigevent aio_sigevent;
+    int ail_lio_opcode;
+};
+```
+
+在进行异步I/O之前需要先初始化AIO控制块，之后可以调用`aio_read`函数来进行异步读操作，或调用`aio_write`函数来进行异步写操作。
+
+```cpp
+#include<aio.h>
+
+//当这些函数返回成功时，异步I/O请求便已经被操作系统放入等待处理的队列中了
+//这些函数的返回值与实际I/O操作的结果没有任何关系
+int aio_read(struct aiocb* aiocb);
+
+int aio_write(struct aiocb* aiocb);
+```
+
+```cpp
+//阻塞等待异步I/O的完成
+int aio_suspend(const struct aiocb* const list[],int nent,
+                const struct timespec *timeout);
+```
+
+
+#### 函数readv和writev
+
+`readv`和`writev`函数用于在一次函数调用中读、写多个非连续缓冲区。有时也将这两个函数称为`散布读(scatter read)`和`聚集写(gather write)`.
+
+```cpp
+#include<sys/uio.h>
+
+//从fd中读数据，依次填入缓冲区iov[0],iov[1],...中
+ssize_t readv(int fd,const struct iovec *iov,int iovcnt);
+//从缓冲区iov[0],iov[1],...依次读数据，写入fd
+ssize_t writev(int fd,const struct iovec *iov,int iovcnt);
+```
+
+#### 存储映射I/O
+
+`存储映射I/O(memory-mapped I/O)`能将一个磁盘文件映射到存储空间中的一个缓冲区上，于是，当从缓冲区中取数据时，就相当于读文件中的相应字节。
+
+```cpp
+#include<sys/mman.h>
+
+//将给定的文件映射到一个存储区域中
+void *mmap(void* addr,size_t len,int prot,int flag,int fd,off_t off);
+```
+
+> 需要注意的是，子进程能通过fork继承存储映射区（因为子进程复制父进程地址空间，而存储映射区是该地址空间的一部分），但是，新程序不能通过exec继承存储映射区
+
+![avatar](../../image/unix_存储映射文件的例子.jpg)
