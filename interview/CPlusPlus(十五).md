@@ -43,7 +43,9 @@ construct ap2:
 
 从这个例子可以非常直观地看到使用malloc不会调用对象的构造函数.
 
-#### 2. new操作符从`自由存储区`上为对象分配内存空间，使用delete释放；而malloc从`堆`上为对象分配内存空间，使用free释放
+#### 2. new分配内存按照数据类型进行分配,返回指定对象的指针；malloc分配内存按照指定的大小分配，返回void*指针
+
+#### 3. new操作符从`自由存储区`上为对象分配内存空间，使用delete释放；而malloc从`堆`上为对象分配内存空间，使用free释放
 
 `自由存储区`是C++基于`new`操作符的一个抽象概念，凡是通过`new`申请到的内存，这块内存就被称为`自由存储区`。
 
@@ -51,7 +53,7 @@ construct ap2:
 
 `自由存储区`可以是堆，也可以不是，这取决于具体实现。（默认情况下C++编译器会使用堆来实现自由存储）
 
-#### 3. 内存分配失败时的处理策略不同: new操作符在内存分配失败时会抛出`bad_alloc`异常，它不会返回NULL；malloc在内存分配失败时返回NULL
+#### 4. 内存分配失败时的处理策略不同: new操作符在内存分配失败时会抛出`bad_alloc`异常，它不会返回NULL；malloc在内存分配失败时返回NULL
 
 new和malloc在`系统内存不足`或`超出进程的内存分配限制`时会导致内存分配失败。
 
@@ -77,7 +79,7 @@ catch(bad_alloc){
 }
 ```
 
-#### 4. 申请数组时的操作不同: 使用new[]一次分配所有内存，多次调用构造函数。而malloc通过malloc(sizeof(obj)*n)分配所有内存
+#### 5. 申请数组时的操作不同: 使用new[]一次分配所有内存，多次调用构造函数。而malloc通过malloc(sizeof(obj)*n)分配所有内存
 
 需要注意的是`new[]`需要和`delete[]`配合使用，防止出现内存泄露。
 
@@ -128,12 +130,36 @@ delete p4:
 */
 ```
 
-#### 5. malloc分配的内存不足时，可以用realloc扩容；而new没有这样的配套设施
+#### 6. malloc分配的内存不足时，可以用realloc扩容；而new没有这样的配套设施
 
-#### 6. new操作符可以重载；而malloc是库函数，不能重载
+下面内容摘自[细说new与malloc的10点区别](https://www.cnblogs.com/qg-whz/p/5140930.html)
 
-#### 7. new分配内存按照数据类型进行分配,返回指定对象的指针；malloc分配内存按照指定的大小分配，返回void*指针
+> 使用malloc分配的内存后，如果在使用过程中发现内存不足，可以使用realloc函数进行内存重新分配实现内存的扩充。realloc先判断当前的指针所指内存是否有足够的连续空间，如果有，原地扩大可分配的内存地址，并且返回原来的地址指针；如果空间不够，先按照新指定的大小分配空间，将原有数据从头到尾拷贝到新分配的内存区域，而后释放原来的内存区域。
+
+#### 7. new操作符可以重载；而malloc是库函数，不能重载
+
+C++标准库定义了`operator new`和`operator delete`的8个重载版本。其中前4个版本可能抛出`bad_alloc`异常，后4个版本则不会抛出异常。
+
+```cpp
+//这些版本可能抛出异常
+void* operator new(size_t); // 分配一个对象
+void* operator new[] (size_t); // 分配一个数组
+void* operator delete(void*) noexcept; // 释放一个对象
+void* operator delete[] (void*) noexcept; //释放一个数组
+```
+
+```cpp
+//这些版本承诺不会抛出异常
+void* operator new(size_t, nothrow_t&) noexcept;
+void* operator new[](size_t, nothrow_t&) noexcept;
+void* operator delete(void*, nothrow_t&) noexcept;
+void* operator delete[] (void*, nothrow_t&) noexcept;
+```
+
+对于`operator new`分配的内存空间，我们无法使用construct函数构造对象，相反，我们应该使用new的定位new(placement new)形式构造对象。
 
 ### 追问: new/delete的功能完全覆盖了malloc/free,为什么还需要malloc和free?
 
+new/delete是c++中的运算符，而malloc/free是c++/c都支持的库函数.
 
+malloc/free只负责内存的申请和释放，而在c++中对于许多自定义的类，需要在创建的时候自动执行构造函数，在销毁的时候自动执行析构函数，使用new/delete运算符可以满足这样的需求。
