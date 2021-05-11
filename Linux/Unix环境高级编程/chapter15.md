@@ -89,3 +89,61 @@ int msgrcv(int msqid,void* ptr,size_t nbytes,long type,int flag);   //从队列�
 
 #### 信号量
 
+信号量是一个计数器，用于为多个进程提供对共享数据对象的访问。
+
+为了获得共享资源，进行需要执行下列操作:
+
+1. 测试控制该资源的信号量
+2. 若此信号量的值为正，则进程可以使用该资源。在这种情况下，进程会将信号量减1，表示它使用了一个资源单位。
+3. 否则，若此信号量的值为0，则进程进入休眠状态，直至信号量值大于0。进程被唤醒后，它返回至步骤(1)。
+
+当进程不再使用由一个信号量控制的共享资源时，该信号量增1。如果有进程正在休眠等待此信号量，则唤醒它们。
+
+XSI信号量相关的函数如下:
+
+```cpp
+int semget(key_t key,int nsems,int flag);                           //引用或创建一个信号量集
+int semctl(int semid,int semnum,int cmd,.../* union semun arg */)   //控制信号量
+int semop(int semid,struct sembuf semoparray[],size_t nops);        //操作信号量
+```
+
+无论何时只要为信号量操作指定了`SEM_UNDO`标志，然后分配资源(sem_op值小于0)，那么内核就会记住对于该特定信号量，分配给调用进程多少资源(sem_op的绝对值)。当该进程终止时，不论自愿或者不自愿，内核都将检验该进程是否还有尚未处理的信号量调整值，如果有，则按调整值对相应信号量进行处理。(相比于互斥量，如果一个进程没有释放互斥量而终止，恢复将是非常困难的)
+
+#### 共享存储
+
+共享存储允许两个或多个进程共享一个给定的存储区。因为数据不需要在客户进程和服务器进程之间复制，所以这是最快的一种IPC。
+
+与共享存储相关的函数如下:
+
+```cpp
+int shmget(key_t key,size_t size,int flag);                         //获得一个共享存储,若成功，返回共享存储ID
+int shmctl(int shmid,int cmd,struct shmid_ds* buf);                 //控制共享存储
+void* shmat(int shmid,const void* addr,int flag);                   //将共享存储连接到进程的地址空间
+int shmdt(const void* addr);                                        //断开与共享存储的连接
+```
+
+当对共享存储段的操作已经结束时，则调用shmdt与该段分离，此时将连接到该共享存储段的进程数减1。直至某个进程带IPC_RMID命令的调用shmctl特地删除该共享存储为止。
+
+#### POSIX信号量
+
+POSIX信号量接口意在解决XSI信号量接口的几个缺陷：
+
+1. 相比于XSI接口，POSIX信号量接口考虑到了更高性能的实现。
+2. POSIX信号量接口使用更简单：没有信号量集。
+3. POSIX信号量在删除时表现更完美。当一个XSI信号量被删除时，使用这个信号量标识符的操作会失败，并将errno设置EIDRM。使用POSIX信号量时，操作能继续正常工作直到该信号量的最后一次引用被释放。
+
+POSIX信号量相关的函数如下:
+
+```cpp
+sem_t* sem_open(const char* name,int oflag,.../*mode_t mode,unsigned int value */);         //创建或使用一个命令信号量，成功时返回指向信号量的指针
+int sem_unlink(conat char* name);       //销毁一个命名信号量
+int sem_close(sem_t* sem);              //释放信号量
+int sem_trywait(sem_t *sem);            //信号量减1操作
+int sem_wait(sem_t* sem);               //信号量减1操作
+int sem_post(sem_t* sem);               //信号量增1操作
+int sem_init(sem_t* sem,int pshared,unsigned int value);            //创建一个未命名的信号量
+int sem_destroy(sem_t* sem);                                        //销毁一个未命名信号量
+int sem_getvalue(sem_t* restrict sem,int *restrict valp);           //获取信号量值
+```
+
+
